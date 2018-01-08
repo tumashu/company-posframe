@@ -110,12 +110,11 @@ position not disappear by sticking out of the display."
 
 (defun company-childframe--update ()
   "Update contents of company tooltip."
-  (let* ((height (min company-tooltip-limit company-candidates-length))
+  (let* ((company-tooltip-margin 0) ;FIXME: Do not support this custom at the moment
+         (height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
          (contents (mapconcat #'identity lines "\n")))
-    (company-childframe--update-1
-     contents
-     (- (point) (length company-prefix) company-tooltip-margin))))
+    (company-childframe--update-1 contents (- (point) (length company-prefix)))))
 
 (defun company-childframe-show ()
   "Show company tooltip at point."
