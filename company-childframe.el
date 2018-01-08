@@ -135,13 +135,17 @@ COMMAND: See `company-frontends'."
     (update (company-childframe--update))
     (post-command (company-childframe--update))))
 
+;;;autoload
 (defun company-childframe-enable ()
   "Replace `company-pseudo-tooltip-frontend' with `company-childframe-frontend'."
-  (kill-local-variable 'company-frontends)
-  (setq-local company-frontends
-              (remove 'company-pseudo-tooltip-frontend
-                      (remove 'company-pseudo-tooltip-unless-just-one-frontend
-                              company-frontends)))
-  (add-to-list 'company-frontends 'company-childframe-frontend))
+  (interactive)
+  (if (< emacs-major-version 26)
+      (message "company-childframe only run emacs (version >= 26).")
+    (kill-local-variable 'company-frontends)
+    (setq-local company-frontends
+                (remove 'company-pseudo-tooltip-frontend
+                        (remove 'company-pseudo-tooltip-unless-just-one-frontend
+                                company-frontends)))
+    (add-to-list 'company-frontends 'company-childframe-frontend)))
 
 (provide 'company-childframe)
