@@ -83,12 +83,13 @@ position not disappear by sticking out of the display."
                  (height . 1)
                  (no-special-glyphs . t)
                  (background-color . ,(face-attribute 'company-tooltip :background))))))
-      (set-window-buffer
-       (frame-root-window company-childframe-child-frame) buffer))
+      (let ((window (frame-root-window pyim-tooltip-child-frame)))
+        ;; This method is more stable than 'setq mode/header-line-format nil'
+        (set-window-parameter window 'mode-line-format 'none)
+        (set-window-parameter window 'header-line-format 'none)
+        (set-window-buffer window buffer)))
 
     (with-current-buffer buffer
-      (setq mode-line-format nil
-            header-line-format nil)
       (erase-buffer)
       (insert string))
 
