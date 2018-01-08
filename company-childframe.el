@@ -4,7 +4,7 @@
 ;;
 
 ;;; Code:
-
+(require 'cl-lib)
 (require 'company)
 
 (defvar company-childframe-child-frame nil)
