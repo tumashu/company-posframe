@@ -21,10 +21,12 @@ position not disappear by sticking out of the display."
          (frame (window-frame window))
          (xmax (frame-pixel-width frame))
          (ymax (frame-pixel-height frame))
+         (header-line-height (window-header-line-height window))
          (posn-top-left (posn-at-point pos window))
          (x (+ (car (window-inside-pixel-edges window))
                (or (car (posn-x-y posn-top-left)) 0)))
          (y-top (+ (cadr (window-pixel-edges window))
+                   header-line-height
                    (or (cdr (posn-x-y posn-top-left)) 0)))
          (posn-next-line-beginning
           (save-excursion
@@ -39,11 +41,13 @@ position not disappear by sticking out of the display."
               (vertical-motion 1)
               (posn-at-point (point) window))))
          (y-buttom (+ (cadr (window-pixel-edges window))
+                      header-line-height
                       (or (cdr (posn-x-y posn-next-line-beginning)) 0))))
     (cons (max 0 (min x (- xmax (or tooltip-width 0))))
           (max 0 (if (> (+ y-buttom (or tooltip-height 0)) ymax)
                      (- y-top (or tooltip-height 0))
-                   y-buttom)))))
+                   y-buttom)))
+    (cons x y-top)))
 
 (defun company-childframe--update-1 (string position)
   (let* ((window-min-height 1)
