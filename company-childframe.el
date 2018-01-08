@@ -110,12 +110,10 @@ position not disappear by sticking out of the display."
   "Update contents of company tooltip."
   (let* ((height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
-         (contents (mapconcat #'identity
-                              (mapcar #'(lambda (x)
-                                          (substring x 1))
-                                      lines)
-                              "\n")))
-    (company-childframe--update-1 contents (- (point) (length company-prefix)))))
+         (contents (mapconcat #'identity lines "\n")))
+    (company-childframe--update-1
+     contents
+     (- (point) (length company-prefix) company-tooltip-margin))))
 
 (defun company-childframe-show ()
   "Show company tooltip at point."
@@ -156,3 +154,9 @@ COMMAND: See `company-frontends'."
     (add-to-list 'company-frontends 'company-childframe-frontend)))
 
 (provide 'company-childframe)
+
+;; Local Variables:
+;; coding: utf-8-unix
+;; End:
+
+;;; company-childframe.el ends here
