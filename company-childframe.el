@@ -82,7 +82,9 @@ position not disappear by sticking out of the display."
                  (width . 50)
                  (height . 1)
                  (no-special-glyphs . t)
-                 (background-color . ,(face-attribute 'company-tooltip :background))))))
+                 (background-color . ,(face-attribute 'company-tooltip :background))
+                 ;; Do not save child-frame when use desktop.el
+                 (desktop-dont-save . t)))))
       (let ((window (frame-root-window company-childframe-child-frame)))
         ;; This method is more stable than 'setq mode/header-line-format nil'
         (set-window-parameter window 'mode-line-format 'none)
