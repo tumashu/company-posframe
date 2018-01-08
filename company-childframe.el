@@ -94,14 +94,17 @@ position not disappear by sticking out of the display."
       (insert string))
 
     (let ((child-frame company-childframe-child-frame))
+      ;; Macos can not move a child-frame when it invisible,
+      ;; the good news is that it has been fixed in emacs master
+      ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html
+      (make-frame-visible child-frame)
       (fit-frame-to-buffer
        child-frame nil (car min-size) nil (cdr min-size))
       (setq x-and-y (company-childframe-compute-pixel-position
                      position
                      (frame-pixel-width child-frame)
                      (frame-pixel-height child-frame)))
-      (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1))
-      (make-frame-visible child-frame))))
+      (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1)))))
 
 (defun company-childframe--update ()
   "Update contents of company tooltip."
