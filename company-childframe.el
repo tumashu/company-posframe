@@ -83,7 +83,7 @@ position not disappear by sticking out of the display."
                  (height . 1)
                  (no-special-glyphs . t)
                  (background-color . ,(face-attribute 'company-tooltip :background))))))
-      (let ((window (frame-root-window pyim-tooltip-child-frame)))
+      (let ((window (frame-root-window company-childframe-child-frame)))
         ;; This method is more stable than 'setq mode/header-line-format nil'
         (set-window-parameter window 'mode-line-format 'none)
         (set-window-parameter window 'header-line-format 'none)
