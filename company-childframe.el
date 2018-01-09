@@ -46,8 +46,7 @@ position not disappear by sticking out of the display."
     (cons (max 0 (min x (- xmax (or tooltip-width 0))))
           (max 0 (if (> (+ y-buttom (or tooltip-height 0)) ymax)
                      (- y-top (or tooltip-height 0))
-                   y-buttom)))
-    (cons x y-top)))
+                   y-buttom)))))
 
 (defun company-childframe--update-1 (string position)
   (let* ((window-min-height 1)
