@@ -22,6 +22,7 @@ position not disappear by sticking out of the display."
          (xmax (frame-pixel-width frame))
          (ymax (frame-pixel-height frame))
          (header-line-height (window-header-line-height window))
+         (scale (company-childframe--get-gdk-scale))
          (posn-top-left (posn-at-point pos window))
          (x (+ (car (window-inside-pixel-edges window))
                (or (car (posn-x-y posn-top-left)) 0)))
@@ -42,11 +43,20 @@ position not disappear by sticking out of the display."
               (posn-at-point (point) window))))
          (y-buttom (+ (cadr (window-pixel-edges window))
                       header-line-height
-                      (or (cdr (posn-x-y posn-next-line-beginning)) 0))))
-    (cons (max 0 (min x (- xmax (or tooltip-width 0))))
+                      (or (cdr (posn-x-y posn-next-line-beginning)) 0)))
+         (adjust-x (max 0 (min x (- xmax (or tooltip-width 0)))))
+         (adjust-y-buttom
           (max 0 (if (> (+ y-buttom (or tooltip-height 0)) ymax)
                      (- y-top (or tooltip-height 0))
-                   y-buttom)))))
+                   y-buttom))))
+    (cons (/ adjust-x scale) (/ adjust-y-buttom scale))))
+
+(defun company-childframe--get-gdk-scale ()
+  ;; FIXME: Temp fix and wait emacs-devel
+  ;; http://lists.gnu.org/archive/html/emacs-devel/2018-01/msg00209.html
+  (let ((scale (string-to-number
+                (or (getenv "GDK_SCALE") "1"))))
+    (if (= scale 0) 1 scale)))
 
 (defun company-childframe--update-1 (string position)
   (let* ((window-min-height 1)
