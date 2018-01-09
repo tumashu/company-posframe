@@ -54,7 +54,7 @@ position not disappear by sticking out of the display."
          (frame-resize-pixelwise t)
          (frame (window-frame))
          (buffer (get-buffer-create " *company-childframe*"))
-         (min-size '(2 . 10))
+         (min-size '(1 . 10))
          x-and-y)
     (unless (and (eq frame company-childframe-current-frame)
                  (frame-live-p company-childframe-child-frame))
