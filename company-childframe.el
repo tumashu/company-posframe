@@ -100,17 +100,14 @@ position not disappear by sticking out of the display."
       (insert string))
 
     (let ((child-frame company-childframe-child-frame))
-      ;; Macos can not move a child-frame when it invisible,
-      ;; the good news is that it has been fixed in emacs master
-      ;; https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html
-      (make-frame-visible child-frame)
       (fit-frame-to-buffer
        child-frame nil (car min-size) nil (cdr min-size))
       (setq x-and-y (company-childframe-compute-pixel-position
                      position
                      (frame-pixel-width child-frame)
                      (frame-pixel-height child-frame)))
-      (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1)))))
+      (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1))
+      (make-frame-visible child-frame))))
 
 (defun company-childframe--update ()
   "Update contents of company tooltip."
@@ -150,13 +147,16 @@ COMMAND: See `company-frontends'."
   "Replace `company-pseudo-tooltip-frontend' with `company-childframe-frontend'."
   (interactive)
   (if (< emacs-major-version 26)
-      (message "company-childframe only run emacs (version >= 26).")
-    (kill-local-variable 'company-frontends)
-    (setq-local company-frontends
-                (remove 'company-pseudo-tooltip-frontend
-                        (remove 'company-pseudo-tooltip-unless-just-one-frontend
-                                company-frontends)))
-    (add-to-list 'company-frontends 'company-childframe-frontend)))
+      (message "Company-childframe need emacs (version >= 26).")
+    (when (if (eq system-type 'darwin)
+              (yes-or-no-p "Are you running emacs-26 (git-snapshot > 20180108) on MacOS? ")
+            t)
+      (kill-local-variable 'company-frontends)
+      (setq-local company-frontends
+                  (remove 'company-pseudo-tooltip-frontend
+                          (remove 'company-pseudo-tooltip-unless-just-one-frontend
+                                  company-frontends)))
+      (add-to-list 'company-frontends 'company-childframe-frontend))))
 
 (provide 'company-childframe)
 
