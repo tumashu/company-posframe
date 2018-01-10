@@ -86,6 +86,7 @@ position not disappear by sticking out of the display."
                  (width . 50)
                  (height . 1)
                  (no-special-glyphs . t)
+                 (inhibit-double-buffering . t)
                  (background-color . ,(face-attribute 'company-tooltip :background))
                  ;; Do not save child-frame when use desktop.el
                  (desktop-dont-save . t)))))
