@@ -148,9 +148,11 @@ COMMAND: See `company-frontends'."
   (interactive)
   (if (< emacs-major-version 26)
       (message "Company-childframe need emacs (version >= 26).")
-    (when (if (eq system-type 'darwin)
-              (yes-or-no-p "Are you running emacs-26 (git-snapshot > 20180108) on MacOS? ")
-            t)
+    (if (if (eq system-type 'darwin)
+            (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180108 on MacOS? "))
+          nil)
+        (message "Company-childframe can not be enabled, more details:
+https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html")
       (kill-local-variable 'company-frontends)
       (setq-local company-frontends
                   (remove 'company-pseudo-tooltip-frontend
