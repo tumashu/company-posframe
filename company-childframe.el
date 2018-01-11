@@ -88,6 +88,7 @@ position not disappear by sticking out of the display."
                  (no-special-glyphs . t)
                  (inhibit-double-buffering . t)
                  (background-color . ,(face-attribute 'company-tooltip :background))
+                 (inhibit-double-buffering . t)
                  ;; Do not save child-frame when use desktop.el
                  (desktop-dont-save . t)))))
       (let ((window (frame-root-window company-childframe-child-frame)))
@@ -116,6 +117,9 @@ position not disappear by sticking out of the display."
          (height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
          (contents (mapconcat #'identity lines "\n")))
+    ;; FIXME: Do not support mouse at the moment, so remove mouse-face
+    (setq contents (copy-sequence contents))
+    (remove-text-properties 0 (length contents) '(mouse-face nil) contents)
     (company-childframe--update-1 contents (- (point) (length company-prefix)))))
 
 (defun company-childframe-show ()
