@@ -83,7 +83,10 @@ position not disappear by sticking out of the display."
                  (background-color . ,(face-attribute 'company-tooltip :background))
                  (inhibit-double-buffering . t)
                  ;; Do not save child-frame when use desktop.el
-                 (desktop-dont-save . t)))))
+                 (desktop-dont-save . t)
+                 ;; This is used to delete company's child-frame when these frames can
+                 ;; not be accessed by `company-childframe-child-frame'
+                 (company-childframe . t)))))
       (let ((window (frame-root-window company-childframe-child-frame)))
         ;; This method is more stable than 'setq mode/header-line-format nil'
         (set-window-parameter window 'mode-line-format 'none)
@@ -124,11 +127,13 @@ position not disappear by sticking out of the display."
   (when (frame-live-p company-childframe-child-frame)
     (make-frame-invisible company-childframe-child-frame)))
 
+;;;autoload
 (defun company-childframe-kill ()
-  "Kill company-childframe's frame and buffer."
-  (when (frame-live-p company-childframe-child-frame)
-    (delete-frame company-childframe--frame)
-    (setq company-childframe-child-frame nil)))
+  "Kill all company-childframe's child frames."
+  (interactive)
+  (dolist (frame (frame-list))
+    (when (frame-parameter frame 'company-childframe)
+      (delete-frame frame))))
 
 (defun company-childframe-frontend (command)
   "`company-mode' frontend using a real X tooltip.
