@@ -28,21 +28,14 @@ position not disappear by sticking out of the display."
          (y-top (+ (cadr (window-pixel-edges window))
                    header-line-height
                    (or (cdr (posn-x-y posn-top-left)) 0)))
-         (posn-next-line-beginning
-          (save-excursion
-            (goto-char pos)
-            (if (= (line-end-position) (point-max))
-                (let (posn)
-                  (goto-char (point-max))
-                  (insert "\n")
-                  (setq posn (posn-at-point (point) window))
-                  (delete-char -1)
-                  posn)
-              (vertical-motion 1)
-              (posn-at-point (point) window))))
-         (y-buttom (+ (cadr (window-pixel-edges window))
-                      header-line-height
-                      (or (cdr (posn-x-y posn-next-line-beginning)) 0))))
+         (font-height
+          (if (= pos 1)
+              (default-line-height)
+            (aref (font-info
+                   (font-at
+                    (if (and (= pos (point-max))) (- pos 1) pos)))
+                  3)))
+         (y-buttom (+ y-top font-height)))
     (cons (max 0 (min x (- xmax (or tooltip-width 0))))
           (max 0 (if (> (+ y-buttom (or tooltip-height 0)) ymax)
                      (- y-top (or tooltip-height 0))
