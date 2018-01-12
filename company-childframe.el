@@ -1,7 +1,33 @@
-;;; company-childframe.el --- Use a real ppup to show company candidates
+;;; company-childframe.el --- Use a child-frame to show company candidates
+
+;; Copyright (C) 2017-2018 Free Software Foundation, Inc.
+
+;;; Author: Clément Pit-Claudel <clement.pitclaudel@live.com>
+;;; Author: Feng Shu <tumashu@163.com>
+
+;; This file is part of GNU Emacs.
+
+;; GNU Emacs is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; GNU Emacs is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+
 
 ;;; Commentary:
 ;;
+;; company-childframe.el is derived from Clément Pit-Claudel's
+;; company-tooltip.el, which can be found at:
+
+;; https://github.com/company-mode/company-mode/issues/745#issuecomment-357138511
+
 
 ;;; Code:
 (require 'cl-lib)
