@@ -10,6 +10,8 @@
 (defvar company-childframe-child-frame nil)
 (defvar company-childframe-current-frame nil)
 
+(defvar company-childframe-force-enable nil)
+
 (defun company-childframe-compute-pixel-position (pos tooltip-width tooltip-height)
   "Return bottom-left-corner pixel position of POS in WINDOW.
 its returned value is like (X . Y)
@@ -151,7 +153,8 @@ COMMAND: See `company-frontends'."
   (interactive)
   (if (< emacs-major-version 26)
       (message "Company-childframe need emacs (version >= 26).")
-    (if (if (eq system-type 'darwin)
+    (if (if (and (eq system-type 'darwin)
+                 (not company-childframe-force-enable))
             (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180108 on MacOS? "))
           nil)
         (message "Company-childframe can not be enabled, more details:
