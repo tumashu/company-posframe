@@ -156,7 +156,9 @@ https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html")
                   (remove 'company-pseudo-tooltip-frontend
                           (remove 'company-pseudo-tooltip-unless-just-one-frontend
                                   company-frontends)))
-      (add-to-list 'company-frontends 'company-childframe-frontend))))
+      (add-to-list 'company-frontends 'company-childframe-frontend)
+      ;; When user switch window, child-frame should be hided.
+      (add-hook 'window-configuration-change-hook #'company-childframe-hide))))
 
 (provide 'company-childframe)
 
