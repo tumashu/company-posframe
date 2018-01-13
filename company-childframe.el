@@ -169,25 +169,35 @@ COMMAND: See `company-frontends'."
     (post-command (company-childframe--update))))
 
 ;;;autoload
-(defun company-childframe-enable ()
-  "Replace `company-pseudo-tooltip-frontend' with `company-childframe-frontend'."
-  (interactive)
-  (if (< emacs-major-version 26)
-      (message "Company-childframe need emacs (version >= 26).")
-    (if (if (and (eq system-type 'darwin)
-                 (not company-childframe-force-enable))
-            (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180114 on MacOS? "))
-          nil)
-        (message "Company-childframe can not be enabled, more details:
+(define-minor-mode company-childframe-mode
+  :global t
+  :group 'company-childframe
+  :lighter " company-childframe"
+  (if company-childframe-mode
+      (if (< emacs-major-version 26)
+          (message "Company-childframe need emacs (version >= 26).")
+        (if (if (and (eq system-type 'darwin)
+                     (not company-childframe-force-enable))
+                (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180114 on MacOS? "))
+              nil)
+            (message "Company-childframe can not be enabled, more details:
 https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html")
-      (kill-local-variable 'company-frontends)
-      (setq-local company-frontends
-                  (remove 'company-pseudo-tooltip-frontend
-                          (remove 'company-pseudo-tooltip-unless-just-one-frontend
-                                  company-frontends)))
-      (add-to-list 'company-frontends 'company-childframe-frontend)
-      ;; When user switch window, child-frame should be hided.
-      (add-hook 'window-configuration-change-hook #'company-childframe-hide))))
+          (advice-add 'company-call-frontends :around #'company-childframe-call-frontends)
+          ;; When user switch window, child-frame should be hided.
+          (add-hook 'window-configuration-change-hook #'company-childframe-hide)
+          (message "Note: `company-call-frontends' will be adviced by `company-childframe-call-frontends'.")))
+    (company-childframe-kill)
+    (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
+    (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
+
+(defun company-childframe-call-frontends (orig-fun command)
+  (let ((company-frontends
+         `(company-childframe-frontend
+           ,@(remove 'company-pseudo-tooltip-frontend
+                     (remove 'company-pseudo-tooltip-unless-just-one-frontend
+                             company-frontends)))))
+    (funcall orig-fun command)))
+
 
 (provide 'company-childframe)
 
