@@ -35,7 +35,13 @@
 
 (defvar company-childframe-child-frame nil)
 
-(defvar company-childframe-force-enable nil)
+(defvar company-childframe-notification
+  "Company-childframe has been enabled.
+
+Note: company-childframe *only* can run with emacs-26, if you are using macOS,
+you need compile and run emacs-26-git-snapshot (version > 20180114).
+
+You can execute `company-childframe-mode' again to disable company-childframe.")
 
 (defun company-childframe-compute-pixel-position (pos tooltip-width tooltip-height)
   "Return bottom-left-corner pixel position of POS in WINDOW.
@@ -174,18 +180,11 @@ COMMAND: See `company-frontends'."
   :group 'company-childframe
   :lighter " company-childframe"
   (if company-childframe-mode
-      (if (< emacs-major-version 26)
-          (message "Company-childframe need emacs (version >= 26).")
-        (if (if (and (eq system-type 'darwin)
-                     (not company-childframe-force-enable))
-                (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180114 on MacOS? "))
-              nil)
-            (message "Company-childframe can not be enabled, more details:
-https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html")
-          (advice-add 'company-call-frontends :around #'company-childframe-call-frontends)
-          ;; When user switch window, child-frame should be hided.
-          (add-hook 'window-configuration-change-hook #'company-childframe-hide)
-          (message "Note: `company-call-frontends' will be adviced by `company-childframe-call-frontends'.")))
+      (progn
+        (advice-add 'company-call-frontends :around #'company-childframe-call-frontends)
+        ;; When user switch window, child-frame should be hided.
+        (add-hook 'window-configuration-change-hook #'company-childframe-hide)
+        (message company-childframe-notification))
     (company-childframe-kill)
     (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
