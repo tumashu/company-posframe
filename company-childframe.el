@@ -34,7 +34,6 @@
 (require 'company)
 
 (defvar company-childframe-child-frame nil)
-(defvar company-childframe-current-frame nil)
 
 (defvar company-childframe-force-enable nil)
 
@@ -77,11 +76,7 @@ position not disappear by sticking out of the display."
          (buffer (get-buffer-create " *company-childframe*"))
          (min-size '(1 . 1))
          x-and-y)
-    (unless (and (eq frame company-childframe-current-frame)
-                 (frame-live-p company-childframe-child-frame))
-      (when (frame-live-p company-childframe-child-frame)
-        (delete-frame company-childframe-child-frame))
-      (setq company-childframe-current-frame frame)
+    (unless (frame-live-p company-childframe-child-frame)
       (setq company-childframe-child-frame
             (let ((after-make-frame-functions nil))
               (make-frame
@@ -126,8 +121,8 @@ position not disappear by sticking out of the display."
       (insert string))
 
     (let ((child-frame company-childframe-child-frame))
-      (fit-frame-to-buffer
-       child-frame nil (car min-size) nil (cdr min-size))
+      (set-frame-parameter child-frame 'parent-frame (window-frame))
+      (fit-frame-to-buffer child-frame nil (car min-size) nil (cdr min-size))
       (setq x-and-y (company-childframe-compute-pixel-position
                      position
                      (frame-pixel-width child-frame)
