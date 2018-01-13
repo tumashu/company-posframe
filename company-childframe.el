@@ -176,7 +176,7 @@ COMMAND: See `company-frontends'."
       (message "Company-childframe need emacs (version >= 26).")
     (if (if (and (eq system-type 'darwin)
                  (not company-childframe-force-enable))
-            (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180108 on MacOS? "))
+            (not (yes-or-no-p "Are you running emacs-26-git-snapshot > 20180114 on MacOS? "))
           nil)
         (message "Company-childframe can not be enabled, more details:
 https://lists.gnu.org/archive/html/bug-gnu-emacs/2018-01/msg00105.html")
