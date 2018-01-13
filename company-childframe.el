@@ -68,14 +68,14 @@ position not disappear by sticking out of the display."
                      (- y-top (or tooltip-height 0))
                    y-buttom)))))
 
-(defun company-childframe--create-frame ()
+(defun company-childframe--create-frame (parent-frame buffer)
   (unless (frame-live-p company-childframe-child-frame)
     (company-childframe-kill)
     (setq company-childframe-child-frame
           (let ((after-make-frame-functions nil))
             (make-frame
              `((background-color . ,(face-attribute 'company-tooltip :background))
-               (parent-frame . ,(window-frame))
+               (parent-frame . ,parent-frame)
                (no-accept-focus . t)
                (min-width  . t)
                (min-height . t)
@@ -116,7 +116,7 @@ position not disappear by sticking out of the display."
          (frame (window-frame))
          (buffer (get-buffer-create " *company-childframe*"))
          x-and-y)
-    (company-childframe--create-frame)
+    (company-childframe--create-frame frame buffer)
     (with-current-buffer buffer
       (erase-buffer)
       (insert string))
