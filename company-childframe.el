@@ -36,6 +36,8 @@
 (defvar company-childframe-child-frame nil)
 (defvar company-childframe-buffer " *company-childframe*")
 
+(defvar company-childframe-mouse-banish t)
+
 (defvar company-childframe-notification
   "Company-childframe has been enabled.
 
@@ -124,9 +126,16 @@ position not disappear by sticking out of the display."
          (buffer (get-buffer-create company-childframe-buffer))
          x-and-y)
     (company-childframe--create-frame frame buffer)
+
     (with-current-buffer buffer
       (erase-buffer)
       (insert string))
+
+    ;; FIXME: This is a hacky fix for the mouse focus problem for child-frame
+    ;; https://github.com/tumashu/company-childframe/issues/4#issuecomment-357514918
+    (when company-childframe-mouse-banish
+      (set-mouse-position frame 0 0))
+
     (let ((child-frame company-childframe-child-frame))
       (set-frame-parameter child-frame 'parent-frame (window-frame))
       (fit-frame-to-buffer child-frame nil 1 nil 1)
