@@ -34,6 +34,7 @@
 (require 'company)
 
 (defvar company-childframe-child-frame nil)
+(defvar company-childframe-buffer " *company-childframe*")
 
 (defvar company-childframe-notification
   "Company-childframe has been enabled.
@@ -120,7 +121,7 @@ position not disappear by sticking out of the display."
          (window-min-width 1)
          (frame-resize-pixelwise t)
          (frame (window-frame))
-         (buffer (get-buffer-create " *company-childframe*"))
+         (buffer (get-buffer-create company-childframe-buffer))
          x-and-y)
     (company-childframe--create-frame frame buffer)
     (with-current-buffer buffer
@@ -186,6 +187,8 @@ COMMAND: See `company-frontends'."
         (add-hook 'window-configuration-change-hook #'company-childframe-hide)
         (message company-childframe-notification))
     (company-childframe-kill)
+    (when (buffer-live-p company-childframe-buffer)
+      (kill-buffer company-childframe-buffer))
     (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
 
