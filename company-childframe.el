@@ -123,6 +123,11 @@ position not disappear by sticking out of the display."
     (when (frame-parameter frame 'company-childframe)
       (delete-frame frame))))
 
+(defun company-childframe--kill-buffer ()
+  "Kill buffer of company-childframe."
+   (when (buffer-live-p company-childframe-buffer)
+     (kill-buffer company-childframe-buffer)))
+
 (defun company-childframe--update-1 (string position)
   (let* ((window-min-height 1)
          (window-min-width 1)
@@ -186,6 +191,7 @@ COMMAND: See `company-frontends'."
         (add-hook 'window-configuration-change-hook #'company-childframe-hide)
         (message company-childframe-notification))
     (company-childframe--delete-frame)
+    (company-childframe--kill-buffer)
     (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
 
