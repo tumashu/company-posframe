@@ -147,7 +147,8 @@ position not disappear by sticking out of the display."
 
     ;; FIXME: This is a hacky fix for the mouse focus problem for child-frame
     ;; https://github.com/tumashu/company-childframe/issues/4#issuecomment-357514918
-    (when company-childframe-mouse-banish
+    (when (and company-childframe-mouse-banish
+               (not (equal (cdr (mouse-position)) '(0 . 0))))
       (set-mouse-position frame 0 0))
 
     (let ((child-frame company-childframe-child-frame))
