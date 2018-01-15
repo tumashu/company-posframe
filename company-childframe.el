@@ -143,13 +143,13 @@ position not disappear by sticking out of the display."
       (insert string))
     (let ((child-frame company-childframe-child-frame))
       (set-frame-parameter child-frame 'parent-frame (window-frame))
-      (unless (eq position company-childframe-last-position)
-        (setq x-and-y (company-childframe-compute-pixel-position
-                       position
-                       (frame-pixel-width child-frame)
-                       (frame-pixel-height child-frame)))
+      (setq x-and-y (company-childframe-compute-pixel-position
+                     position
+                     (frame-pixel-width child-frame)
+                     (frame-pixel-height child-frame)))
+      (unless (equal x-and-y company-childframe-last-position)
         (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1))
-        (setq company-childframe-last-position position))
+        (setq company-childframe-last-position x-and-y))
       (fit-frame-to-buffer child-frame nil 1 nil 1)
       (unless (frame-visible-p child-frame)
         (make-frame-visible child-frame)))))
@@ -171,7 +171,6 @@ position not disappear by sticking out of the display."
 
 (defun company-childframe-hide ()
   "Hide company tooltip."
-  (setq company-childframe-last-position nil)
   (when (frame-live-p company-childframe-child-frame)
     (make-frame-invisible company-childframe-child-frame)))
 
