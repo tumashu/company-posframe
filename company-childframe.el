@@ -36,6 +36,8 @@
 (defvar company-childframe-child-frame nil)
 (defvar company-childframe-buffer " *company-childframe*")
 
+(defvar company-childframe-last-position nil)
+
 (defvar company-childframe-notification
   "Company-childframe has been enabled.
 
@@ -141,12 +143,14 @@ position not disappear by sticking out of the display."
       (insert string))
     (let ((child-frame company-childframe-child-frame))
       (set-frame-parameter child-frame 'parent-frame (window-frame))
+      (unless (eq position company-childframe-last-position)
+        (setq x-and-y (company-childframe-compute-pixel-position
+                       position
+                       (frame-pixel-width child-frame)
+                       (frame-pixel-height child-frame)))
+        (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1))
+        (setq company-childframe-last-position position))
       (fit-frame-to-buffer child-frame nil 1 nil 1)
-      (setq x-and-y (company-childframe-compute-pixel-position
-                     position
-                     (frame-pixel-width child-frame)
-                     (frame-pixel-height child-frame)))
-      (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1))
       (make-frame-visible child-frame))))
 
 (defun company-childframe--update ()
