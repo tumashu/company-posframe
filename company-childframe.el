@@ -151,7 +151,8 @@ position not disappear by sticking out of the display."
         (set-frame-position child-frame (car x-and-y) (+ (cdr x-and-y) 1))
         (setq company-childframe-last-position position))
       (fit-frame-to-buffer child-frame nil 1 nil 1)
-      (make-frame-visible child-frame))))
+      (unless (frame-visible-p child-frame)
+        (make-frame-visible child-frame)))))
 
 (defun company-childframe--update ()
   "Update contents of company tooltip."
