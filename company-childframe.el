@@ -77,7 +77,7 @@ position not disappear by sticking out of the display."
 
 (defun company-childframe--create-frame (parent-frame buffer)
   (unless (frame-live-p company-childframe-child-frame)
-    (company-childframe-kill)
+    (company-childframe--delete-frame)
     (setq company-childframe-child-frame
           (let ((after-make-frame-functions nil))
             (make-frame
@@ -115,6 +115,13 @@ position not disappear by sticking out of the display."
       (set-window-parameter window 'mode-line-format 'none)
       (set-window-parameter window 'header-line-format 'none)
       (set-window-buffer window buffer))))
+
+(defun company-childframe--delete-frame ()
+  "Kill child-frame of company-childframe."
+  (interactive)
+  (dolist (frame (frame-list))
+    (when (frame-parameter frame 'company-childframe)
+      (delete-frame frame))))
 
 (defun company-childframe--update-1 (string position)
   (let* ((window-min-height 1)
@@ -157,16 +164,6 @@ position not disappear by sticking out of the display."
   (when (frame-live-p company-childframe-child-frame)
     (make-frame-invisible company-childframe-child-frame)))
 
-;;;autoload
-(defun company-childframe-kill ()
-  "Kill child-frame and buffer of company-childframe."
-  (interactive)
-  (dolist (frame (frame-list))
-    (when (frame-parameter frame 'company-childframe)
-      (delete-frame frame)))
-  (when (buffer-live-p company-childframe-buffer)
-    (kill-buffer company-childframe-buffer)))
-
 (defun company-childframe-frontend (command)
   "`company-mode' frontend using a real X tooltip.
 COMMAND: See `company-frontends'."
@@ -188,7 +185,7 @@ COMMAND: See `company-frontends'."
         ;; When user switch window, child-frame should be hided.
         (add-hook 'window-configuration-change-hook #'company-childframe-hide)
         (message company-childframe-notification))
-    (company-childframe-kill)
+    (company-childframe--delete-frame)
     (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
 
