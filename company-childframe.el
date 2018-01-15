@@ -168,11 +168,13 @@ position not disappear by sticking out of the display."
 
 ;;;autoload
 (defun company-childframe-kill ()
-  "Kill all company-childframe's child frames."
+  "Kill child-frame and buffer of company-childframe."
   (interactive)
   (dolist (frame (frame-list))
     (when (frame-parameter frame 'company-childframe)
-      (delete-frame frame))))
+      (delete-frame frame)))
+  (when (buffer-live-p company-childframe-buffer)
+    (kill-buffer company-childframe-buffer)))
 
 (defun company-childframe-frontend (command)
   "`company-mode' frontend using a real X tooltip.
@@ -196,8 +198,6 @@ COMMAND: See `company-frontends'."
         (add-hook 'window-configuration-change-hook #'company-childframe-hide)
         (message company-childframe-notification))
     (company-childframe-kill)
-    (when (buffer-live-p company-childframe-buffer)
-      (kill-buffer company-childframe-buffer))
     (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
 
