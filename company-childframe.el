@@ -170,6 +170,7 @@ position not disappear by sticking out of the display."
 
 (defun company-childframe-hide ()
   "Hide company tooltip."
+  (setq company-childframe-last-position nil)
   (when (frame-live-p company-childframe-child-frame)
     (make-frame-invisible company-childframe-child-frame)))
 
