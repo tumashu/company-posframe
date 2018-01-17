@@ -62,10 +62,14 @@ position not disappear by sticking out of the display."
          (header-line-height (window-header-line-height window))
          (posn-top-left (posn-at-point pos window))
          (x (+ (car (window-inside-pixel-edges window))
-               (or (car (posn-x-y posn-top-left)) 0)))
+               (- (or (car (posn-x-y posn-top-left)) 0)
+                  (or (car (posn-object-x-y posn-top-left)) 0))))
          (y-top (+ (cadr (window-pixel-edges window))
                    header-line-height
-                   (or (cdr (posn-x-y posn-top-left)) 0)))
+                   (- (or (cdr (posn-x-y posn-top-left)) 0)
+                      ;; Fix the conflict with flycheck
+                      ;; http://lists.gnu.org/archive/html/emacs-devel/2018-01/msg00537.html
+                      (or (cdr (posn-object-x-y posn-top-left)) 0))))
          (font-height
           (if (= pos 1)
               (default-line-height)
