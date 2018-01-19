@@ -1,9 +1,13 @@
-;;; company-childframe.el --- Use a child-frame to show company candidates
+;;; company-childframe.el --- Use a child-frame as company candidate menu
 
 ;; Copyright (C) 2017-2018 Free Software Foundation, Inc.
 
-;;; Author: Clément Pit-Claudel <clement.pitclaudel@live.com>
-;;; Author: Feng Shu <tumashu@163.com>
+;; Author: Clément Pit-Claudel, Feng Shu
+;; Maintainer: Feng Shu <tumashu@163.com>
+;; URL: https://github.com/company-mode/company-mode
+;; Version: 0.1.0
+;; Keywords: abbrev, convenience, matching
+;; Package-Requires: ((emacs "26.0")(company "0.9.0"))
 
 ;; This file is part of GNU Emacs.
 
@@ -22,7 +26,23 @@
 
 
 ;;; Commentary:
-;;
+
+;; ** What is company-childframe
+;; company-childframe is a company extension, which let company use
+;; child frame as its candidate menu.
+
+;; It has the following feature:
+;; 1. It is more fast than the company default candidate menu.
+;; 2. It works well with CJK language.
+
+;; ** How to use company-childframe
+
+;; #+BEGIN_SRC emacs-lisp
+;; (require 'company-childframe)
+;; (company-childframe-mode 1)
+;; #+END_SRC
+
+;; ** Note
 ;; company-childframe.el is derived from Clément Pit-Claudel's
 ;; company-tooltip.el, which can be found at:
 
@@ -30,15 +50,21 @@
 
 
 ;;; Code:
+;; * company-childframe's code
 (require 'cl-lib)
 (require 'company)
 
-(defvar company-childframe-child-frame nil)
-(defvar company-childframe-buffer " *company-childframe*")
+(defvar company-childframe-child-frame nil
+  "Child frame used as company candidate menu.")
 
-(defvar company-childframe-last-position nil)
+(defvar company-childframe-buffer " *company-childframe*"
+  "Buffer attached to the child frame.")
 
-(defvar company-childframe-mouse-banish t)
+(defvar company-childframe-last-position nil
+  "Record the last candidate menu's pixel position.")
+
+(defvar company-childframe-mouse-banish t
+  "Mouse will be moved to (0 , 0) when it is non-nil.")
 
 (defvar company-childframe-notification
   "[Company-childframe]: Requires emacs (version >= 26.0.91).")
@@ -79,6 +105,9 @@ position not disappear by sticking out of the display."
                    y-buttom)))))
 
 (defun company-childframe--create-frame (parent-frame buffer)
+  "Create a child frame as company-childframe's candidate menu.
+Its parent-frame will be PARENT-FRAME and its frame-root-window's
+buffer will be BUFFER."
   (unless (frame-live-p company-childframe-child-frame)
     (company-childframe--delete-frame)
     (setq company-childframe-child-frame
@@ -132,6 +161,8 @@ position not disappear by sticking out of the display."
      (kill-buffer company-childframe-buffer)))
 
 (defun company-childframe--update-1 (string position)
+  "Internal function of `company-childframe--update'.
+It will show child-frame at POSITION and the contents is STRING."
   (let* ((window-min-height 1)
          (window-min-width 1)
          (frame-resize-pixelwise t)
@@ -164,7 +195,7 @@ position not disappear by sticking out of the display."
         (make-frame-visible child-frame)))))
 
 (defun company-childframe--update ()
-  "Update contents of company tooltip."
+  "Update contents of company-childframe candidate menu."
   (let* ((company-tooltip-margin 0) ;FIXME: Do not support this custom at the moment
          (height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
@@ -175,16 +206,16 @@ position not disappear by sticking out of the display."
     (company-childframe--update-1 contents (- (point) (length company-prefix)))))
 
 (defun company-childframe-show ()
-  "Show company tooltip at point."
+  "Show company-childframe candidate menu."
   (company-childframe--update))
 
 (defun company-childframe-hide ()
-  "Hide company tooltip."
+  "Hide company-childframe candidate menu."
   (when (frame-live-p company-childframe-child-frame)
     (make-frame-invisible company-childframe-child-frame)))
 
 (defun company-childframe-frontend (command)
-  "`company-mode' frontend using a real X tooltip.
+  "`company-mode' frontend using child-frame.
 COMMAND: See `company-frontends'."
   (cl-case command
     (pre-command nil)
@@ -195,7 +226,9 @@ COMMAND: See `company-frontends'."
 
 ;;;autoload
 (define-minor-mode company-childframe-mode
+  "Company-childframe minor mode."
   :global t
+  :require 'company-childframe
   :group 'company-childframe
   :lighter " company-childframe"
   (if company-childframe-mode
@@ -210,6 +243,8 @@ COMMAND: See `company-frontends'."
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
 
 (defun company-childframe-call-frontends (orig-fun command)
+  "This function is used as advice function of `company-call-frontends'.
+Its arguments: ORIG-FUN and COMMAND."
   (let ((company-frontends
          `(company-childframe-frontend
            ,@(remove 'company-pseudo-tooltip-frontend
