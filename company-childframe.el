@@ -41,7 +41,7 @@
 (defvar company-childframe-mouse-banish t)
 
 (defvar company-childframe-notification
-  "Note: Company-childframe require emacs which version >= 26.0.91.")
+  "[Company-childframe]: Requires emacs (version >= 26.0.91).")
 
 (defun company-childframe-compute-pixel-position (pos tooltip-width tooltip-height)
   "Return bottom-left-corner pixel position of POS in WINDOW.
