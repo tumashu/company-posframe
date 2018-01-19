@@ -1,18 +1,18 @@
 
 # &#30446;&#24405;
 
-1.  [company-childframe README](#org62b9ef9)
-    1.  [What is company-childframe](#orgbd69b8e)
-    2.  [How to use company-childframe](#orgfa1484b)
-    3.  [Note](#org351a77a)
+1.  [company-childframe README](#org6ec9166)
+    1.  [What is company-childframe](#org7a2fc02)
+    2.  [How to use company-childframe](#org7a4c1da)
+    3.  [Note](#orge83cf25)
 
 
-<a id="org62b9ef9"></a>
+<a id="org6ec9166"></a>
 
 # company-childframe README
 
 
-<a id="orgbd69b8e"></a>
+<a id="org7a2fc02"></a>
 
 ## What is company-childframe
 
@@ -25,15 +25,15 @@ It has the following feature:
 2.  It works well with CJK language.
 
 
-<a id="orgfa1484b"></a>
+<a id="org7a4c1da"></a>
 
 ## How to use company-childframe
 
-    ;; (require 'company-childframe)
-    ;; (company-childframe-mode 1)
+    (require 'company-childframe)
+    (company-childframe-mode 1)
 
 
-<a id="org351a77a"></a>
+<a id="orge83cf25"></a>
 
 ## Note
 

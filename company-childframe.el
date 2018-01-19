@@ -38,10 +38,10 @@
 
 ;; ** How to use company-childframe
 
-;; #+BEGIN_SRC emacs-lisp
+;; #+BEGIN_EXAMPLE
 ;; (require 'company-childframe)
 ;; (company-childframe-mode 1)
-;; #+END_SRC
+;; #+END_EXAMPLE
 
 ;; ** Note
 ;; company-childframe.el is derived from Clément Pit-Claudel's
