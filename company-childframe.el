@@ -27,6 +27,7 @@
 
 ;;; Commentary:
 
+;; * company-childframe README                                :README:
 ;; ** What is company-childframe
 ;; company-childframe is a company extension, which let company use
 ;; child frame as its candidate menu.
