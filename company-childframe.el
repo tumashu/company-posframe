@@ -41,12 +41,7 @@
 (defvar company-childframe-mouse-banish t)
 
 (defvar company-childframe-notification
-  "Company-childframe has been enabled.
-
-Note: company-childframe *only* can run with emacs-26, if you are using macOS,
-you need compile and run emacs-26-git-snapshot (version > 20180114).
-
-You can execute `company-childframe-mode' again to disable company-childframe.")
+  "Note: Company-childframe require emacs which version >= 26.0.91.")
 
 (defun company-childframe-compute-pixel-position (pos tooltip-width tooltip-height)
   "Return bottom-left-corner pixel position of POS in WINDOW.
