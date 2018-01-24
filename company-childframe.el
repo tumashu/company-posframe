@@ -137,7 +137,7 @@ buffer will be BUFFER."
                (width . 50)
                (height . 1)
                (no-special-glyphs . t)
-               (inhibit-double-buffering . t)
+               (inhibit-double-buffering . nil)
                ;; Do not save child-frame when use desktop.el
                (desktop-dont-save . t)
                ;; This is used to delete company's child-frame when these frames can
