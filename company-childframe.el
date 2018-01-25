@@ -147,6 +147,17 @@ buffer will be BUFFER."
       ;; This method is more stable than 'setq mode/header-line-format nil'
       (set-window-parameter window 'mode-line-format 'none)
       (set-window-parameter window 'header-line-format 'none)
+      ;; Many variables take effect after call `set-window-buffer'
+      (with-current-buffer buffer
+        (setq-local left-fringe-width 0)
+        (setq-local right-fringe-width 0)
+        (setq-local fringes-outside-margins 0)
+        (setq-local truncate-lines t)
+        (setq-local mode-line-format nil)
+        (setq-local header-line-format nil)
+        (setq-local cursor-type nil)
+        (setq-local cursor-in-non-selected-windows nil)
+        (setq-local show-trailing-whitespace nil))
       (set-window-buffer window buffer))))
 
 (defun company-childframe--delete-frame ()
