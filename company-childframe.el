@@ -74,7 +74,7 @@
     (posframe-show company-childframe-buffer
                    contents
                    :position (- (point) (length company-prefix))
-                   :mini-width company-tooltip-minimum-width
+                   :min-width company-tooltip-minimum-width
                    :background-color (face-attribute 'company-tooltip :background))))
 
 (defun company-childframe-hide ()
