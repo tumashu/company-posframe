@@ -104,7 +104,7 @@ COMMAND: See `company-frontends'."
         ;; When user switch window, child-frame should be hided.
         (add-hook 'window-configuration-change-hook #'company-childframe-hide)
         (message company-childframe-notification))
-    (posframe-delete "company-childframe")
+    (posframe-delete company-childframe-buffer)
     (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
 
