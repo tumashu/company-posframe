@@ -56,6 +56,16 @@
 (require 'company)
 (require 'posframe)
 
+(defgroup company-childframe nil
+  "Use a child-frame as company candidate menu"
+  :group 'company
+  :prefix "company-childframe")
+
+(defcustom company-childframe-font nil
+  "The font used by company-childframe's frame.
+Using current frame's font if it it nil."
+  :group 'company-childframe)
+
 (defvar company-childframe-buffer " *company-childframe-buffer*"
   "Company-childframe's buffer which used by posframe.")
 
@@ -74,6 +84,7 @@
     (posframe-show company-childframe-buffer
                    contents
                    :position (- (point) (length company-prefix))
+                   :font company-childframe-font
                    :min-width company-tooltip-minimum-width
                    :background-color (face-attribute 'company-tooltip :background))))
 
