@@ -236,7 +236,7 @@ COMMAND: See `company-frontends'."
     (update (company-childframe--update))
     (post-command (company-childframe--update))))
 
-;;;autoload
+;;;###autoload
 (define-minor-mode company-childframe-mode
   "Company-childframe minor mode."
   :global t
