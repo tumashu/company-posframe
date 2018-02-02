@@ -82,7 +82,7 @@ Using current frame's font if it it nil."
     (setq contents (copy-sequence contents))
     (remove-text-properties 0 (length contents) '(mouse-face nil) contents)
     (posframe-show company-childframe-buffer
-                   contents
+                   :string contents
                    :position (- (point) (length company-prefix))
                    :font company-childframe-font
                    :min-width company-tooltip-minimum-width
