@@ -74,8 +74,7 @@ Using current frame's font if it it nil."
 
 (defun company-childframe-show ()
   "Show company-childframe candidate menu."
-  (let* ((company-tooltip-margin 0) ;FIXME: Do not support this custom at the moment
-         (height (min company-tooltip-limit company-candidates-length))
+  (let* ((height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
          (contents (mapconcat #'identity lines "\n")))
     ;; FIXME: Do not support mouse at the moment, so remove mouse-face
@@ -84,6 +83,7 @@ Using current frame's font if it it nil."
     (posframe-show company-childframe-buffer
                    :string contents
                    :position (- (point) (length company-prefix))
+                   :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
                    :font company-childframe-font
                    :min-width company-tooltip-minimum-width
                    :background-color (face-attribute 'company-tooltip :background))))
