@@ -1,20 +1,20 @@
 
 # &#30446;&#24405;
 
-1.  [company-childframe README](#orgdff7546)
-    1.  [What is company-childframe](#org75d8502)
-    2.  [How to use company-childframe](#org451f5c4)
-    3.  [Tips](#org5148a38)
-        1.  [Work better with desktop.el](#org39a885b)
-    4.  [Note](#org22e43a8)
+1.  [company-childframe README](#org4663135)
+    1.  [What is company-childframe](#org59ce0d0)
+    2.  [How to use company-childframe](#orgda40d2a)
+    3.  [Tips](#org63199bc)
+        1.  [Work better with desktop.el](#orgd6ea75f)
+    4.  [Note](#org593ae90)
 
 
-<a id="orgdff7546"></a>
+<a id="org4663135"></a>
 
 # company-childframe README
 
 
-<a id="org75d8502"></a>
+<a id="org59ce0d0"></a>
 
 ## What is company-childframe
 
@@ -27,7 +27,7 @@ It has the following feature:
 2.  It works well with CJK language.
 
 
-<a id="org451f5c4"></a>
+<a id="orgda40d2a"></a>
 
 ## How to use company-childframe
 
@@ -35,22 +35,23 @@ It has the following feature:
     (company-childframe-mode 1)
 
 
-<a id="org5148a38"></a>
+<a id="org63199bc"></a>
 
 ## Tips
 
 
-<a id="org39a885b"></a>
+<a id="orgd6ea75f"></a>
 
 ### Work better with desktop.el
 
 The below code let desktop.el not record the company-childframe-mode
 
+    (require 'desktop) ;this line is needed.
     (push '(company-childframe-mode . nil)
           desktop-minor-mode-table)
 
 
-<a id="org22e43a8"></a>
+<a id="org593ae90"></a>
 
 ## Note
 

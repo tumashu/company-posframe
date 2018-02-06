@@ -47,6 +47,7 @@
 ;; *** Work better with desktop.el
 ;; The below code let desktop.el not record the company-childframe-mode
 ;; #+BEGIN_EXAMPLE
+;; (require 'desktop) ;this line is needed.
 ;; (push '(company-childframe-mode . nil)
 ;;       desktop-minor-mode-table)
 ;; #+END_EXAMPLE
