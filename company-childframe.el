@@ -43,6 +43,14 @@
 ;; (company-childframe-mode 1)
 ;; #+END_EXAMPLE
 
+;; ** Tips
+;; *** Work better with desktop.el
+;; The below code let desktop.el not record the company-childframe-mode
+;; #+BEGIN_EXAMPLE
+;; (push '(company-childframe-mode . nil)
+;;       desktop-minor-mode-table)
+;; #+END_EXAMPLE
+
 ;; ** Note
 ;; company-childframe.el is derived from Clément Pit-Claudel's
 ;; company-tooltip.el, which can be found at:
