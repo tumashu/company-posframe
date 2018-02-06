@@ -36,6 +36,9 @@
 ;; 1. It is fast enough for daily use.
 ;; 2. It works well with CJK language.
 
+;; *At the moment*, company-childframe can not work well with:
+;; 1. company-quickhelp
+
 ;; ** How to use company-childframe
 
 ;; #+BEGIN_EXAMPLE

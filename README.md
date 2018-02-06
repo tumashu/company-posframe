@@ -1,20 +1,20 @@
 
 # &#30446;&#24405;
 
-1.  [company-childframe README](#org3af03de)
-    1.  [What is company-childframe](#org175b976)
-    2.  [How to use company-childframe](#org2db81e7)
-    3.  [Tips](#orgd28e830)
-        1.  [Work better with desktop.el](#org80ed06c)
-    4.  [Note](#org2d583c3)
+1.  [company-childframe README](#org3ce19e1)
+    1.  [What is company-childframe](#orgff8d689)
+    2.  [How to use company-childframe](#orgf75576c)
+    3.  [Tips](#org4da50bd)
+        1.  [Work better with desktop.el](#org0eaba34)
+    4.  [Note](#orgd2315ed)
 
 
-<a id="org3af03de"></a>
+<a id="org3ce19e1"></a>
 
 # company-childframe README
 
 
-<a id="org175b976"></a>
+<a id="orgff8d689"></a>
 
 ## What is company-childframe
 
@@ -26,8 +26,12 @@ It has the following feature:
 1.  It is fast enough for daily use.
 2.  It works well with CJK language.
 
+**At the moment**, company-childframe can not work well with:
 
-<a id="org2db81e7"></a>
+1.  company-quickhelp
+
+
+<a id="orgf75576c"></a>
 
 ## How to use company-childframe
 
@@ -35,12 +39,12 @@ It has the following feature:
     (company-childframe-mode 1)
 
 
-<a id="orgd28e830"></a>
+<a id="org4da50bd"></a>
 
 ## Tips
 
 
-<a id="org80ed06c"></a>
+<a id="org0eaba34"></a>
 
 ### Work better with desktop.el
 
@@ -51,7 +55,7 @@ The below code let desktop.el not record the company-childframe-mode
           desktop-minor-mode-table)
 
 
-<a id="org2d583c3"></a>
+<a id="orgd2315ed"></a>
 
 ## Note
 
