@@ -33,7 +33,7 @@
 ;; child frame as its candidate menu.
 
 ;; It has the following feature:
-;; 1. It is more fast than the company default candidate menu.
+;; 1. It is fast enough for daily use.
 ;; 2. It works well with CJK language.
 
 ;; ** How to use company-childframe

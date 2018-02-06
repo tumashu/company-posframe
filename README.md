@@ -1,20 +1,20 @@
 
 # &#30446;&#24405;
 
-1.  [company-childframe README](#org4663135)
-    1.  [What is company-childframe](#org59ce0d0)
-    2.  [How to use company-childframe](#orgda40d2a)
-    3.  [Tips](#org63199bc)
-        1.  [Work better with desktop.el](#orgd6ea75f)
-    4.  [Note](#org593ae90)
+1.  [company-childframe README](#org3af03de)
+    1.  [What is company-childframe](#org175b976)
+    2.  [How to use company-childframe](#org2db81e7)
+    3.  [Tips](#orgd28e830)
+        1.  [Work better with desktop.el](#org80ed06c)
+    4.  [Note](#org2d583c3)
 
 
-<a id="org4663135"></a>
+<a id="org3af03de"></a>
 
 # company-childframe README
 
 
-<a id="org59ce0d0"></a>
+<a id="org175b976"></a>
 
 ## What is company-childframe
 
@@ -23,11 +23,11 @@ child frame as its candidate menu.
 
 It has the following feature:
 
-1.  It is more fast than the company default candidate menu.
+1.  It is fast enough for daily use.
 2.  It works well with CJK language.
 
 
-<a id="orgda40d2a"></a>
+<a id="org2db81e7"></a>
 
 ## How to use company-childframe
 
@@ -35,12 +35,12 @@ It has the following feature:
     (company-childframe-mode 1)
 
 
-<a id="org63199bc"></a>
+<a id="orgd28e830"></a>
 
 ## Tips
 
 
-<a id="orgd6ea75f"></a>
+<a id="org80ed06c"></a>
 
 ### Work better with desktop.el
 
@@ -51,7 +51,7 @@ The below code let desktop.el not record the company-childframe-mode
           desktop-minor-mode-table)
 
 
-<a id="org593ae90"></a>
+<a id="org2d583c3"></a>
 
 ## Note
 
