@@ -114,6 +114,12 @@ COMMAND: See `company-frontends'."
     (update (company-childframe-show))
     (post-command (company-childframe-show))))
 
+(defun company-childframe-unless-just-one-frontend (command)
+  "`company-childframe-frontend', but not shown for single candidates."
+  (if (company--show-inline-p)
+      (company-childframe-hide)
+    (company-childframe-frontend command)))
+
 ;;;###autoload
 (define-minor-mode company-childframe-mode
   "Company-childframe minor mode."
@@ -123,24 +129,15 @@ COMMAND: See `company-frontends'."
   :lighter " company-childframe"
   (if company-childframe-mode
       (progn
-        (advice-add 'company-call-frontends :around #'company-childframe-call-frontends)
-        ;; When user switch window, child-frame should be hided.
+        (advice-add #'company-pseudo-tooltip-frontend :override #'company-childframe-frontend)
+        (advice-add #'company-pseudo-tooltip-unless-just-one-frontend :override #'company-childframe-unless-just-one-frontend)
+        ;; When user switches window, child-frame should be hidden.
         (add-hook 'window-configuration-change-hook #'company-childframe-hide)
         (message company-childframe-notification))
     (posframe-delete company-childframe-buffer)
-    (advice-remove 'company-call-frontends #'company-childframe-call-frontends)
+    (advice-remove #'company-pseudo-tooltip-frontend #'company-childframe-frontend)
+    (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend #'company-childframe-unless-just-one-frontend)
     (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
-
-(defun company-childframe-call-frontends (orig-fun command)
-  "This function is used as advice function of `company-call-frontends'.
-Its arguments: ORIG-FUN and COMMAND."
-  (let ((company-frontends
-         `(company-childframe-frontend
-           ,@(remove 'company-pseudo-tooltip-frontend
-                     (remove 'company-pseudo-tooltip-unless-just-one-frontend
-                             company-frontends)))))
-    (funcall orig-fun command)))
-
 
 (provide 'company-childframe)
 
