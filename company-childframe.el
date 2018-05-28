@@ -84,15 +84,31 @@ Using current frame's font if it it nil."
 (defvar company-childframe-notification
   "[Company-childframe]: Requires emacs (version >= 26.0.91).")
 
+(defvar company-childframe-active-map
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap [mouse-1] 'ignore)
+    (define-key keymap [mouse-3] 'ignore)
+    (define-key keymap [down-mouse-1] 'ignore)
+    (define-key keymap [down-mouse-3] 'ignore)
+    (define-key keymap [up-mouse-1] 'ignore)
+    (define-key keymap [up-mouse-3] 'ignore)
+    (define-key keymap [wheel-down] 'ignore)
+    (define-key keymap [wheel-up] 'ignore)
+    keymap)
+  "Keymap that is enabled during an active completion in posframe.")
+
 (defun company-childframe-show ()
   "Show company-childframe candidate menu."
   (let* ((height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
-         (contents (mapconcat #'identity lines "\n")))
+         (contents (mapconcat #'identity lines "\n"))
+         (buffer (get-buffer-create company-childframe-buffer)))
     ;; FIXME: Do not support mouse at the moment, so remove mouse-face
     (setq contents (copy-sequence contents))
     (remove-text-properties 0 (length contents) '(mouse-face nil) contents)
-    (posframe-show company-childframe-buffer
+    (with-current-buffer buffer
+      (setq-local overriding-local-map company-childframe-active-map))
+    (posframe-show buffer
                    :string contents
                    :position (- (point) (length company-prefix))
                    :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
