@@ -81,8 +81,7 @@ Using current frame's font if it it nil."
 (defvar company-childframe-buffer " *company-childframe-buffer*"
   "Company-childframe's buffer which used by posframe.")
 
-(defvar company-childframe-notification
-  "[Company-childframe]: Requires emacs (version >= 26.0.91).")
+(defvar company-childframe-notification "")
 
 (defun company-childframe-show ()
   "Show company-childframe candidate menu."
