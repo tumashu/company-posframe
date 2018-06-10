@@ -78,6 +78,10 @@
 Using current frame's font if it it nil."
   :group 'company-childframe)
 
+(defcustom company-childframe-lighter " company-childframe"
+  "The lighter string used by `company-childframe-mode'."
+  :group 'company-childframe)
+
 (defvar company-childframe-buffer " *company-childframe-buffer*"
   "Company-childframe's buffer which used by posframe.")
 
@@ -141,7 +145,7 @@ COMMAND: See `company-frontends'."
   :global t
   :require 'company-childframe
   :group 'company-childframe
-  :lighter " company-childframe"
+  :lighter company-childframe-lighter
   (if company-childframe-mode
       (progn
         (advice-add #'company-pseudo-tooltip-frontend :override #'company-childframe-frontend)
