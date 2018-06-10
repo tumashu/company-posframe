@@ -1,24 +1,26 @@
+Note: this file is auto converted from company-posframe.el by [el2org](https://github.com/tumashu/el2org), please do not edit it by hand!!!
+
 
 # &#30446;&#24405;
 
-1.  [company-childframe README](#org3ce19e1)
-    1.  [What is company-childframe](#orgff8d689)
-    2.  [How to use company-childframe](#orgf75576c)
-    3.  [Tips](#org4da50bd)
-        1.  [Work better with desktop.el](#org0eaba34)
-    4.  [Note](#orgd2315ed)
+1.  [company-posframe README](#org184ec57)
+    1.  [What is company-posframe](#org5977ed1)
+    2.  [How to use company-posframe](#org4860ee2)
+    3.  [Tips](#org3b5bafe)
+        1.  [Work better with desktop.el](#orgaa2ca0f)
+    4.  [Note](#org836557d)
 
 
-<a id="org3ce19e1"></a>
+<a id="org184ec57"></a>
 
-# company-childframe README
+# company-posframe README
 
 
-<a id="orgff8d689"></a>
+<a id="org5977ed1"></a>
 
-## What is company-childframe
+## What is company-posframe
 
-company-childframe is a company extension, which let company use
+company-posframe is a company extension, which let company use
 child frame as its candidate menu.
 
 It has the following feature:
@@ -26,44 +28,40 @@ It has the following feature:
 1.  It is fast enough for daily use.
 2.  It works well with CJK language.
 
-**At the moment**, company-childframe can not work well with:
+**At the moment**, company-posframe can not work well with:
 
 1.  company-quickhelp
 
 
-<a id="orgf75576c"></a>
+<a id="org4860ee2"></a>
 
-## How to use company-childframe
+## How to use company-posframe
 
-    (require 'company-childframe)
-    (company-childframe-mode 1)
+    (require 'company-posframe)
+    (company-posframe-mode 1)
 
 
-<a id="org4da50bd"></a>
+<a id="org3b5bafe"></a>
 
 ## Tips
 
 
-<a id="org0eaba34"></a>
+<a id="orgaa2ca0f"></a>
 
 ### Work better with desktop.el
 
-The below code let desktop.el not record the company-childframe-mode
+The below code let desktop.el not record the company-posframe-mode
 
     (require 'desktop) ;this line is needed.
-    (push '(company-childframe-mode . nil)
+    (push '(company-posframe-mode . nil)
           desktop-minor-mode-table)
 
 
-<a id="orgd2315ed"></a>
+<a id="org836557d"></a>
 
 ## Note
 
-company-childframe.el is derived from Clément Pit-Claudel's
+company-posframe.el is derived from Clément Pit-Claudel's
 company-tooltip.el, which can be found at:
 
 <https://github.com/company-mode/company-mode/issues/745#issuecomment-357138511>
-
-
-
-Converted from company-childframe.el by [el2org](https://github.com/tumashu/el2org) .

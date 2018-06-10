@@ -1,10 +1,10 @@
-;;; company-childframe.el --- Use a child-frame as company candidate menu
+;;; company-posframe.el --- Use a posframe as company candidate menu
 
 ;; Copyright (C) 2017-2018 Free Software Foundation, Inc.
 
 ;; Author: Clément Pit-Claudel, Feng Shu
 ;; Maintainer: Feng Shu <tumashu@163.com>
-;; URL: https://github.com/company-mode/company-mode
+;; URL: https://github.com/tumashu/company-posframe
 ;; Version: 0.1.0
 ;; Keywords: abbrev, convenience, matching
 ;; Package-Requires: ((emacs "26.0")(company "0.9.0")(posframe "0.1.0"))
@@ -27,67 +27,67 @@
 
 ;;; Commentary:
 
-;; * company-childframe README                                :README:
-;; ** What is company-childframe
-;; company-childframe is a company extension, which let company use
+;; * company-posframe README                                :README:
+;; ** What is company-posframe
+;; company-posframe is a company extension, which let company use
 ;; child frame as its candidate menu.
 
 ;; It has the following feature:
 ;; 1. It is fast enough for daily use.
 ;; 2. It works well with CJK language.
 
-;; *At the moment*, company-childframe can not work well with:
+;; *At the moment*, company-posframe can not work well with:
 ;; 1. company-quickhelp
 
-;; ** How to use company-childframe
+;; ** How to use company-posframe
 
 ;; #+BEGIN_EXAMPLE
-;; (require 'company-childframe)
-;; (company-childframe-mode 1)
+;; (require 'company-posframe)
+;; (company-posframe-mode 1)
 ;; #+END_EXAMPLE
 
 ;; ** Tips
 ;; *** Work better with desktop.el
-;; The below code let desktop.el not record the company-childframe-mode
+;; The below code let desktop.el not record the company-posframe-mode
 ;; #+BEGIN_EXAMPLE
 ;; (require 'desktop) ;this line is needed.
-;; (push '(company-childframe-mode . nil)
+;; (push '(company-posframe-mode . nil)
 ;;       desktop-minor-mode-table)
 ;; #+END_EXAMPLE
 
 ;; ** Note
-;; company-childframe.el is derived from Clément Pit-Claudel's
+;; company-posframe.el is derived from Clément Pit-Claudel's
 ;; company-tooltip.el, which can be found at:
 
 ;; https://github.com/company-mode/company-mode/issues/745#issuecomment-357138511
 
 
 ;;; Code:
-;; * company-childframe's code
+;; * company-posframe's code
 (require 'cl-lib)
 (require 'company)
 (require 'posframe)
 
-(defgroup company-childframe nil
+(defgroup company-posframe nil
   "Use a child-frame as company candidate menu"
   :group 'company
-  :prefix "company-childframe")
+  :prefix "company-posframe")
 
-(defcustom company-childframe-font nil
-  "The font used by company-childframe's frame.
+(defcustom company-posframe-font nil
+  "The font used by company-posframe's frame.
 Using current frame's font if it it nil."
-  :group 'company-childframe)
+  :group 'company-posframe)
 
-(defcustom company-childframe-lighter " company-childframe"
-  "The lighter string used by `company-childframe-mode'."
-  :group 'company-childframe)
+(defcustom company-posframe-lighter " company-posframe"
+  "The lighter string used by `company-posframe-mode'."
+  :group 'company-posframe)
 
-(defvar company-childframe-buffer " *company-childframe-buffer*"
-  "Company-childframe's buffer which used by posframe.")
+(defvar company-posframe-buffer " *company-posframe-buffer*"
+  "company-posframe's buffer which used by posframe.")
 
-(defvar company-childframe-notification "")
+(defvar company-posframe-notification "")
 
-(defvar company-childframe-active-map
+(defvar company-posframe-active-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [mouse-1] 'ignore)
     (define-key keymap [mouse-3] 'ignore)
@@ -100,68 +100,68 @@ Using current frame's font if it it nil."
     keymap)
   "Keymap that is enabled during an active completion in posframe.")
 
-(defun company-childframe-show ()
-  "Show company-childframe candidate menu."
+(defun company-posframe-show ()
+  "Show company-posframe candidate menu."
   (let* ((height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
          (contents (mapconcat #'identity lines "\n"))
-         (buffer (get-buffer-create company-childframe-buffer)))
+         (buffer (get-buffer-create company-posframe-buffer)))
     ;; FIXME: Do not support mouse at the moment, so remove mouse-face
     (setq contents (copy-sequence contents))
     (remove-text-properties 0 (length contents) '(mouse-face nil) contents)
     (with-current-buffer buffer
-      (setq-local overriding-local-map company-childframe-active-map))
+      (setq-local overriding-local-map company-posframe-active-map))
     (posframe-show buffer
                    :string contents
                    :position (- (point) (length company-prefix))
                    :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
-                   :font company-childframe-font
+                   :font company-posframe-font
                    :min-width company-tooltip-minimum-width
                    :background-color (face-attribute 'company-tooltip :background))))
 
-(defun company-childframe-hide ()
-  "Hide company-childframe candidate menu."
-  (posframe-hide company-childframe-buffer))
+(defun company-posframe-hide ()
+  "Hide company-posframe candidate menu."
+  (posframe-hide company-posframe-buffer))
 
-(defun company-childframe-frontend (command)
+(defun company-posframe-frontend (command)
   "`company-mode' frontend using child-frame.
 COMMAND: See `company-frontends'."
   (cl-case command
     (pre-command nil)
-    (show (company-childframe-show))
-    (hide (company-childframe-hide))
-    (update (company-childframe-show))
-    (post-command (company-childframe-show))))
+    (show (company-posframe-show))
+    (hide (company-posframe-hide))
+    (update (company-posframe-show))
+    (post-command (company-posframe-show))))
 
-(defun company-childframe-unless-just-one-frontend (command)
-  "`company-childframe-frontend', but not shown for single candidates."
+(defun company-posframe-unless-just-one-frontend (command)
+  "`company-posframe-frontend', but not shown for single candidates."
   (if (company--show-inline-p)
-      (company-childframe-hide)
-    (company-childframe-frontend command)))
+      (company-posframe-hide)
+    (company-posframe-frontend command)))
 
 ;;;###autoload
-(define-minor-mode company-childframe-mode
-  "Company-childframe minor mode."
+(define-minor-mode company-posframe-mode
+  "company-posframe minor mode."
   :global t
-  :require 'company-childframe
-  :group 'company-childframe
-  :lighter company-childframe-lighter
-  (if company-childframe-mode
+  :require 'company-posframe
+  :group 'company-posframe
+  :lighter company-posframe-lighter
+  (if company-posframe-mode
       (progn
-        (advice-add #'company-pseudo-tooltip-frontend :override #'company-childframe-frontend)
-        (advice-add #'company-pseudo-tooltip-unless-just-one-frontend :override #'company-childframe-unless-just-one-frontend)
+        (advice-add #'company-pseudo-tooltip-frontend :override #'company-posframe-frontend)
+        (advice-add #'company-pseudo-tooltip-unless-just-one-frontend :override #'company-posframe-unless-just-one-frontend)
         ;; When user switches window, child-frame should be hidden.
-        (add-hook 'window-configuration-change-hook #'company-childframe-hide)
-        (message company-childframe-notification))
-    (posframe-delete company-childframe-buffer)
-    (advice-remove #'company-pseudo-tooltip-frontend #'company-childframe-frontend)
-    (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend #'company-childframe-unless-just-one-frontend)
-    (remove-hook 'window-configuration-change-hook #'company-childframe-hide)))
+        (add-hook 'window-configuration-change-hook #'company-posframe-hide)
+        (message company-posframe-notification))
+    (posframe-delete company-posframe-buffer)
+    (advice-remove #'company-pseudo-tooltip-frontend #'company-posframe-frontend)
+    (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend #'company-posframe-unless-just-one-frontend)
+    (remove-hook 'window-configuration-change-hook #'company-posframe-hide)))
 
-(provide 'company-childframe)
+(provide 'company-posframe)
 
 ;; Local Variables:
 ;; coding: utf-8-unix
 ;; End:
 
-;;; company-childframe.el ends here
+;;; company-posframe.el ends here
