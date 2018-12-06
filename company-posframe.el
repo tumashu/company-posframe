@@ -104,6 +104,7 @@ Using current frame's font if it it nil."
   "Show company-posframe candidate menu."
   (let* ((height (min company-tooltip-limit company-candidates-length))
          (lines (company--create-lines company-selection height))
+         (width (length (car lines)))
          (contents (mapconcat #'identity lines "\n"))
          (buffer (get-buffer-create company-posframe-buffer)))
     ;; FIXME: Do not support mouse at the moment, so remove mouse-face
@@ -114,6 +115,7 @@ Using current frame's font if it it nil."
     (posframe-show buffer
                    :string contents
                    :position (- (point) (length company-prefix))
+                   :height height :width width
                    :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
                    :font company-posframe-font
                    :min-width company-tooltip-minimum-width
