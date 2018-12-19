@@ -130,7 +130,6 @@ Using current frame's font if it it nil."
 COMMAND: See `company-frontends'."
   (cl-case command
     (pre-command nil)
-    (show (company-posframe-show))
     (hide (company-posframe-hide))
     (update (company-posframe-show))
     (post-command (company-posframe-show))))
