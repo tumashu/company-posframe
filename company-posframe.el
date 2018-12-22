@@ -140,6 +140,14 @@ COMMAND: See `company-frontends'."
       (company-posframe-hide)
     (company-posframe-frontend command)))
 
+(defun company-posframe-valid-p ()
+  "Test posframe's status."
+  (and (>= emacs-major-version 26)
+       (featurep 'posframe)
+       (not (or noninteractive
+                emacs-basic-display
+                (not (display-graphic-p))))))
+
 ;;;###autoload
 (define-minor-mode company-posframe-mode
   "company-posframe minor mode."
@@ -147,17 +155,23 @@ COMMAND: See `company-frontends'."
   :require 'company-posframe
   :group 'company-posframe
   :lighter company-posframe-lighter
-  (if company-posframe-mode
-      (progn
-        (advice-add #'company-pseudo-tooltip-frontend :override #'company-posframe-frontend)
-        (advice-add #'company-pseudo-tooltip-unless-just-one-frontend :override #'company-posframe-unless-just-one-frontend)
-        ;; When user switches window, child-frame should be hidden.
-        (add-hook 'window-configuration-change-hook #'company-posframe-hide)
-        (message company-posframe-notification))
-    (posframe-delete company-posframe-buffer)
-    (advice-remove #'company-pseudo-tooltip-frontend #'company-posframe-frontend)
-    (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend #'company-posframe-unless-just-one-frontend)
-    (remove-hook 'window-configuration-change-hook #'company-posframe-hide)))
+  (if (not (company-posframe-valid-p))
+      (message "Company-posframe does not support terminal Emacs.")
+    (if company-posframe-mode
+        (progn
+          (advice-add #'company-pseudo-tooltip-frontend
+                      :override #'company-posframe-frontend)
+          (advice-add #'company-pseudo-tooltip-unless-just-one-frontend
+                      :override #'company-posframe-unless-just-one-frontend)
+          ;; When user switches window, child-frame should be hidden.
+          (add-hook 'window-configuration-change-hook #'company-posframe-hide)
+          (message company-posframe-notification))
+      (posframe-delete company-posframe-buffer)
+      (advice-remove #'company-pseudo-tooltip-frontend
+                     #'company-posframe-frontend)
+      (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend
+                     #'company-posframe-unless-just-one-frontend)
+      (remove-hook 'window-configuration-change-hook #'company-posframe-hide))))
 
 (provide 'company-posframe)
 
