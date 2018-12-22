@@ -156,7 +156,7 @@ COMMAND: See `company-frontends'."
   :group 'company-posframe
   :lighter company-posframe-lighter
   (if (not (company-posframe-valid-p))
-      (message "Company-posframe does not support terminal Emacs.")
+      (message "company-posframe can not work in current emacs environment.")
     (if company-posframe-mode
         (progn
           (advice-add #'company-pseudo-tooltip-frontend
