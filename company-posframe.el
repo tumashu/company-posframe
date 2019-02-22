@@ -148,6 +148,12 @@ COMMAND: See `company-frontends'."
                 emacs-basic-display
                 (not (display-graphic-p))))))
 
+(defun company-posframe-window-change ()
+  "Hide posframe on window change."
+  ;; Do not hide if the buffer whose frame has changed is the posframe itself
+  (unless (string= (buffer-name) company-posframe-buffer)
+    (company-posframe-hide)))
+
 ;;;###autoload
 (define-minor-mode company-posframe-mode
   "company-posframe minor mode."
@@ -164,7 +170,7 @@ COMMAND: See `company-frontends'."
           (advice-add #'company-pseudo-tooltip-unless-just-one-frontend
                       :override #'company-posframe-unless-just-one-frontend)
           ;; When user switches window, child-frame should be hidden.
-          (add-hook 'window-configuration-change-hook #'company-posframe-hide)
+          (add-hook 'window-configuration-change-hook #'company-posframe-window-change)
           (message company-posframe-notification))
       (posframe-delete company-posframe-buffer)
       (advice-remove #'company-pseudo-tooltip-frontend
