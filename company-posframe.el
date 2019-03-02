@@ -111,7 +111,9 @@ Using current frame's font if it it nil."
     (setq contents (copy-sequence contents))
     (remove-text-properties 0 (length contents) '(mouse-face nil) contents)
     (with-current-buffer buffer
-      (setq-local overriding-local-map company-posframe-active-map))
+      (setq-local overriding-local-map company-posframe-active-map)
+      ;; Set width of marginal areas of the buffer window to ZERO
+      (set-window-margins (get-buffer-window buffer) 0 0))
     (posframe-show buffer
                    :string contents
                    :position (- (point) (length company-prefix))
