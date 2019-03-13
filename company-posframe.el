@@ -140,14 +140,6 @@ COMMAND: See `company-frontends'."
       (company-posframe-hide)
     (company-posframe-frontend command)))
 
-(defun company-posframe-valid-p ()
-  "Test posframe's status."
-  (and (>= emacs-major-version 26)
-       (featurep 'posframe)
-       (not (or noninteractive
-                emacs-basic-display
-                (not (display-graphic-p))))))
-
 (defun company-posframe-window-change ()
   "Hide posframe on window change."
   ;; Do not hide if the buffer whose frame has changed is the posframe itself
@@ -161,7 +153,7 @@ COMMAND: See `company-frontends'."
   :require 'company-posframe
   :group 'company-posframe
   :lighter company-posframe-lighter
-  (if (not (company-posframe-valid-p))
+  (if (not (posframe-workable-p))
       (message "company-posframe can not work in current emacs environment.")
     (if company-posframe-mode
         (progn
