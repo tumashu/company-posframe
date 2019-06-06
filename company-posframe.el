@@ -87,6 +87,8 @@ Using current frame's font if it it nil."
 
 (defvar company-posframe-notification "")
 
+(defvar company-posframe--last-status nil)
+
 (defvar company-posframe-active-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [mouse-1] 'ignore)
@@ -128,6 +130,9 @@ Using current frame's font if it it nil."
 (defun company-posframe-frontend (command)
   "`company-mode' frontend using child-frame.
 COMMAND: See `company-frontends'."
+  (setq company-posframe--last-status
+        (list (selected-window)
+              (current-buffer)))
   (cl-case command
     (pre-command nil)
     (hide (company-posframe-hide))
@@ -142,8 +147,9 @@ COMMAND: See `company-frontends'."
 
 (defun company-posframe-window-change ()
   "Hide posframe on window change."
-  ;; Do not hide if the buffer whose frame has changed is the posframe itself
-  (unless (string= (buffer-name) company-posframe-buffer)
+  (unless (equal company-posframe--last-status
+                 (list (selected-window)
+                       (current-buffer)))
     (company-posframe-hide)))
 
 ;;;###autoload
@@ -169,7 +175,7 @@ COMMAND: See `company-frontends'."
                      #'company-posframe-frontend)
       (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend
                      #'company-posframe-unless-just-one-frontend)
-      (remove-hook 'window-configuration-change-hook #'company-posframe-hide))))
+      (remove-hook 'window-configuration-change-hook #'company-posframe-window-change))))
 
 (provide 'company-posframe)
 
