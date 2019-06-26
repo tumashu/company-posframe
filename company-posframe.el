@@ -147,9 +147,10 @@ COMMAND: See `company-frontends'."
 
 (defun company-posframe-window-change ()
   "Hide posframe on window change."
-  (unless (equal company-posframe--last-status
-                 (list (selected-window)
-                       (current-buffer)))
+  (unless (or (string= (buffer-name) company-posframe-buffer)
+              (equal company-posframe--last-status
+                     (list (selected-window)
+                           (current-buffer))))
     (company-posframe-hide)))
 
 ;;;###autoload
