@@ -82,6 +82,38 @@ Using current frame's font if it it nil."
   "The lighter string used by `company-posframe-mode'."
   :group 'company-posframe)
 
+(defcustom company-posframe-show-indicator t
+  "Display an indicator for backends in the mode line of the posframe."
+  :group 'company-posframe
+  :type 'boolean)
+
+(defcustom company-posframe-show-metadata t
+  "Display metadata (e.g. signature) of the selection below the visible candidates."
+  :group 'company-posframe
+  :type 'boolean)
+
+(defcustom company-posframe-backend-separator "|"
+  "String used to separate entries in the backend indicator."
+  :group 'company-posframe
+  :type 'string)
+
+(defcustom company-posframe-backend-format-function #'company-posframe-format-backend-name
+  "Function used to format each backend in the indicator."
+  :group 'company-posframe
+  :type 'function)
+
+(defface company-posframe-inactive-backend-name
+  '((t :inherit mode-line))
+  "Face for the active backend name in the header line.")
+
+(defface company-posframe-active-backend-name
+  '((t :inherit mode-line-emphasis))
+  "Face for the active backend name in the header line.")
+
+(defface company-posframe-metadata
+  '((t :inherit font-lock-comment-face))
+  "Face for the metadata footer (not the backend indicator).")
+
 (defvar company-posframe-buffer " *company-posframe-buffer*"
   "company-posframe's buffer which used by posframe.")
 
@@ -102,23 +134,51 @@ Using current frame's font if it it nil."
     keymap)
   "Keymap that is enabled during an active completion in posframe.")
 
+(defun company-posframe-format-backend-name (backend)
+  "Format BACKEND for displaying in the modeline."
+  (propertize (cl-typecase backend
+                (symbol (string-remove-prefix "company-" (symbol-name backend)))
+                (list (format "[%s]" (mapconcat #'company-posframe-format-backend-name backend "|")))
+                (otherwise "-"))
+              'face (if (equal backend company-backend)
+                        'company-posframe-active-backend-name
+                      'company-posframe-inactive-backend-name)))
+
 (defun company-posframe-show ()
   "Show company-posframe candidate menu."
   (let* ((height (min company-tooltip-limit company-candidates-length))
+         (meta (when company-posframe-show-metadata
+                 (company-fetch-metadata)))
          (lines (company--create-lines company-selection height))
+         (backend-names (when company-posframe-show-indicator
+                          (mapconcat company-posframe-backend-format-function
+                                     company-backends
+                                     company-posframe-backend-separator)))
          (width (length (car lines)))
-         (contents (mapconcat #'identity lines "\n"))
+         (contents (concat (mapconcat #'identity lines "\n")
+                           (if meta
+                               (concat "\n" (propertize (if (> (length meta) width)
+                                                            (substring meta 0 width)
+                                                          meta)
+                                                        'face 'company-posframe-metadata))
+                             "")))
          (buffer (get-buffer-create company-posframe-buffer)))
     ;; FIXME: Do not support mouse at the moment, so remove mouse-face
     (setq contents (copy-sequence contents))
     (remove-text-properties 0 (length contents) '(mouse-face nil) contents)
     (with-current-buffer buffer
-      (setq-local overriding-local-map company-posframe-active-map))
+      (setq-local overriding-local-map company-posframe-active-map)
+      (when company-posframe-show-indicator
+        (setq-local mode-line-format `(,(substring backend-names 0
+                                                   (min width (length backend-names)))))))
     (posframe-show buffer
                    :string contents
                    :position (- (point) (length company-prefix))
-                   :height height :width width
+                   :height (+ height
+                              (if company-posframe-show-indicator 1 0))
+                   :width width
                    :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
+                   :respect-mode-line company-posframe-show-indicator
                    :font company-posframe-font
                    :min-width company-tooltip-minimum-width
                    :background-color (face-attribute 'company-tooltip :background))))
