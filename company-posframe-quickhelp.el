@@ -39,6 +39,10 @@
 (require 'company-quickhelp)
 (require 'posframe)
 
+(defface company-posframe-quickhelp
+  '((t :inherit tooltip :height 100))
+  "Face for company-posframe-quickhelp doc.")
+
 (defvar company-posframe-quickhelp-posframe-buffer " *company-posframe-quickhelp-buffer*"
   "The buffer which used by company-posframe-quickhelp.")
 
@@ -70,13 +74,21 @@
     (while-no-input
       (let* ((selected (nth company-selection company-candidates))
              (doc (let ((inhibit-message t))
-                    (company-quickhelp--doc selected))))
+                    (company-quickhelp--doc selected)))
+             (bg (face-attribute 'company-posframe-quickhelp :background nil t))
+             (fg (face-attribute 'company-posframe-quickhelp :foreground nil t)))
         (when doc
           (apply #'posframe-show
                  company-posframe-quickhelp-posframe-buffer
-                 :string (propertize doc 'face '(:height 100))
-                 :background-color company-quickhelp-color-background
-                 :foreground-color company-quickhelp-color-foreground
+                 :string (propertize doc 'face 'company-posframe-quickhelp)
+                 :background-color
+                 (if (eq bg 'unspecified)
+                     company-quickhelp-color-background
+                   bg)
+                 :foreground-color
+                 (if (eq fg 'unspecified)
+                     company-quickhelp-color-foreground
+                   fg)
                  :position
                  (with-current-buffer company-posframe-buffer
                    (let ((pos posframe--last-posframe-pixel-position))
