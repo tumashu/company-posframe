@@ -55,6 +55,12 @@
 ;;       desktop-minor-mode-table)
 ;; #+END_EXAMPLE
 
+;; *** Work better with company-quickhelp
+;; #+BEGIN_EXAMPLE
+;; (require 'company-quickhelp)
+;; (require 'company-posframe-quickhelp)
+;; #+END_EXAMPLE
+
 ;; ** Note
 ;; company-posframe.el is derived from Clément Pit-Claudel's
 ;; company-tooltip.el, which can be found at:
