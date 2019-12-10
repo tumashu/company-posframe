@@ -47,7 +47,7 @@
   "The buffer which used by company-posframe-quickhelp.")
 
 (defvar company-posframe-quickhelp-show-params
-  (list :internal-border-width 3
+  (list :internal-border-width 0
         :timeout 300
         :internal-border-color "gray50"
         :no-properties nil
@@ -81,6 +81,9 @@
           (apply #'posframe-show
                  company-posframe-quickhelp-posframe-buffer
                  :string (propertize doc 'face 'company-posframe-quickhelp)
+                 :min-height
+                 (with-current-buffer company-posframe-buffer
+                   (frame-height posframe--frame))
                  :background-color
                  (if (eq bg 'unspecified)
                      company-quickhelp-color-background
