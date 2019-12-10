@@ -69,18 +69,8 @@
     (company-quickhelp--cancel-timer)
     (while-no-input
       (let* ((selected (nth company-selection company-candidates))
-             (ovl company-pseudo-tooltip-overlay)
-             (overlay-width
-              (* (frame-char-width)
-                 (if ovl (overlay-get ovl 'company-width) 0)))
-             (overlay-position
-              (* (frame-char-width)
-                 (- (if ovl (overlay-get ovl 'company-column) 1) 1)))
              (doc (let ((inhibit-message t))
-                    (company-quickhelp--doc selected)))
-             (company-posframe-p
-              (and (featurep 'company-posframe)
-                   company-posframe-mode)))
+                    (company-quickhelp--doc selected))))
         (when doc
           (apply #'posframe-show
                  company-posframe-quickhelp-posframe-buffer
@@ -88,15 +78,10 @@
                  :background-color company-quickhelp-color-background
                  :foreground-color company-quickhelp-color-foreground
                  :position
-                 (if company-posframe-p
-                     (with-current-buffer company-posframe-buffer
-                       (let ((pos posframe--last-posframe-pixel-position))
-                         (cons (+ (car pos) (frame-pixel-width posframe--frame))
-                               (cdr pos))))
-                   (overlay-start ovl))
-                 :x-pixel-offset
-                 (unless company-posframe-p
-                   (+ overlay-width overlay-position))
+                 (with-current-buffer company-posframe-buffer
+                   (let ((pos posframe--last-posframe-pixel-position))
+                     (cons (+ (car pos) (frame-pixel-width posframe--frame))
+                           (cdr pos))))
                  company-posframe-quickhelp-show-params))))))
 
 (advice-add 'company-quickhelp-frontend :override #'company-posframe-quickhelp-frontend)
