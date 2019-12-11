@@ -67,8 +67,7 @@ Fix: need improve.")
     (`hide
      (when company-quickhelp-delay
        (company-quickhelp--cancel-timer))
-     (when (posframe-workable-p)
-       (posframe-hide company-posframe-quickhelp-posframe-buffer)))))
+     (company-posframe-quickhelp-hide))))
 
 (defun company-posframe-quickhelp--show ()
   "Advice function of `company-quickhelp--show'."

@@ -190,9 +190,14 @@ Using current frame's font if it it nil."
                    :min-width company-tooltip-minimum-width
                    :background-color (face-attribute 'company-tooltip :background))))
 
+(declare-function company-posframe-quickhelp-hide
+                  "company-posframe-quickhelp" (&optional arg))
+
 (defun company-posframe-hide ()
   "Hide company-posframe candidate menu."
-  (posframe-hide company-posframe-buffer))
+  (posframe-hide company-posframe-buffer)
+  (when (functionp 'company-posframe-quickhelp-hide)
+    (company-posframe-quickhelp-hide)))
 
 (defun company-posframe-frontend (command)
   "`company-mode' frontend using child-frame.
