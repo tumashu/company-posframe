@@ -7,7 +7,7 @@
 ;; URL: https://github.com/tumashu/company-posframe
 ;; Version: 0.1.0
 ;; Keywords: abbrev, convenience, matching
-;; Package-Requires: ((emacs "26.0")(company "0.9.0")(posframe "0.1.0")(company-quickhelp "0.1.0"))
+;; Package-Requires: ((emacs "26.0")(company-posframe "0.1"))
 
 ;; This file is part of GNU Emacs.
 
@@ -31,21 +31,19 @@
 
 ;; #+BEGIN_EXAMPLE
 ;; (require 'company-quickhelp)
+;; (require 'company-posframe)
 ;; (require 'company-posframe-quickhelp)
 ;; #+END_EXAMPLE
 
 ;;; Code:
 ;; * company-posframe-quickhelp's code
 (require 'company-quickhelp)
-(require 'posframe)
+(require 'company-posframe)
 
 (defface company-posframe-quickhelp
   '((t :inherit highlight))
   "Face for company-posframe-quickhelp doc.
 Fix: need improve.")
-
-(defvar company-posframe-quickhelp-minimum-height 10
-  "The minimum height of quickhelp frame.")
 
 (defvar company-posframe-quickhelp-posframe-buffer " *company-posframe-quickhelp-buffer*"
   "The buffer which used by company-posframe-quickhelp.")
@@ -81,7 +79,10 @@ Fix: need improve.")
              (doc (let ((inhibit-message t))
                     (company-quickhelp--doc selected)))
              (height
-              (max company-posframe-quickhelp-minimum-height
+              (max (+ company-tooltip-limit
+                      (if company-posframe-show-indicator 1 0)
+                      (if company-posframe-show-metadata 1 0)
+                      -1)
                    (with-current-buffer company-posframe-buffer
                      (- (frame-height posframe--frame) 1))))
              (background (face-attribute 'company-posframe-quickhelp :background nil t))

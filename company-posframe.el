@@ -58,6 +58,7 @@
 ;; *** Work better with company-quickhelp
 ;; #+BEGIN_EXAMPLE
 ;; (require 'company-quickhelp)
+;; (require 'company-posframe)
 ;; (require 'company-posframe-quickhelp)
 ;; #+END_EXAMPLE
 
@@ -180,9 +181,9 @@ Using current frame's font if it it nil."
     (posframe-show buffer
                    :string contents
                    :position (- (point) (length company-prefix))
-                   :height (+ height
-                              (if company-posframe-show-indicator 1 0))
-                   :width width
+                   :min-height (+ height
+                                  (if company-posframe-show-indicator 1 0))
+                   :min-width width
                    :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
                    :respect-mode-line company-posframe-show-indicator
                    :font company-posframe-font
