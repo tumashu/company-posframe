@@ -80,9 +80,10 @@ Fix: need improve.")
       (let* ((selected (nth company-selection company-candidates))
              (doc (let ((inhibit-message t))
                     (company-quickhelp--doc selected)))
-             (company-height
-              (with-current-buffer company-posframe-buffer
-                (frame-height posframe--frame)))
+             (height
+              (max company-posframe-quickhelp-minimum-height
+                   (with-current-buffer company-posframe-buffer
+                     (- (frame-height posframe--frame) 1))))
              (background (face-attribute 'company-posframe-quickhelp :background nil t))
              (foreground (face-attribute 'company-posframe-quickhelp :foreground nil t))
              (header-line
@@ -99,10 +100,9 @@ Fix: need improve.")
           (apply #'posframe-show
                  company-posframe-quickhelp-posframe-buffer
                  :string (propertize doc 'face 'company-posframe-quickhelp)
-                 :height (- company-height 1)
                  :min-width (length header-line)
-                 :min-height (max (- company-height 1)
-                                  company-posframe-quickhelp-minimum-height)
+                 :min-height height
+                 :height height
                  :respect-header-line t
                  :background-color
                  (if (eq background 'unspecified)
