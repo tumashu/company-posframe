@@ -63,7 +63,8 @@ Fix: need improve.")
      (when (and company-quickhelp-delay
                 (not (string-match-p "^company-posframe-quickhelp-"
                                      (symbol-name this-command))))
-       (company-quickhelp--set-timer)))
+       (company-quickhelp--set-timer)
+       (company-posframe-quickhelp-hide)))
     (`hide
      (when company-quickhelp-delay
        (company-quickhelp--cancel-timer))
