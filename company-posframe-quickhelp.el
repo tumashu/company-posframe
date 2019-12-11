@@ -40,8 +40,12 @@
 (require 'posframe)
 
 (defface company-posframe-quickhelp
-  '((t :inherit tooltip :height 100))
-  "Face for company-posframe-quickhelp doc.")
+  '((t :inherit highlight))
+  "Face for company-posframe-quickhelp doc.
+Fix: need improve.")
+
+(defvar company-posframe-quickhelp-minimum-height 10
+  "The minimum height of quickhelp frame.")
 
 (defvar company-posframe-quickhelp-posframe-buffer " *company-posframe-quickhelp-buffer*"
   "The buffer which used by company-posframe-quickhelp.")
@@ -57,10 +61,11 @@
 (defun company-posframe-quickhelp-frontend (command)
   "Advice function of `company-quickhelp-frontend'."
   (pcase command
-    (`post-command (when company-quickhelp-delay
-                     (company-quickhelp--set-timer))
-                   (when (posframe-workable-p)
-                     (posframe-hide company-posframe-quickhelp-posframe-buffer)))
+    (`post-command
+     (when (and company-quickhelp-delay
+                (not (string-match-p "^company-posframe-quickhelp-"
+                                     (symbol-name this-command))))
+       (company-quickhelp--set-timer)))
     (`hide
      (when company-quickhelp-delay
        (company-quickhelp--cancel-timer))
@@ -75,29 +80,65 @@
       (let* ((selected (nth company-selection company-candidates))
              (doc (let ((inhibit-message t))
                     (company-quickhelp--doc selected)))
-             (bg (face-attribute 'company-posframe-quickhelp :background nil t))
-             (fg (face-attribute 'company-posframe-quickhelp :foreground nil t)))
+             (company-height
+              (with-current-buffer company-posframe-buffer
+                (frame-height posframe--frame)))
+             (background (face-attribute 'company-posframe-quickhelp :background nil t))
+             (foreground (face-attribute 'company-posframe-quickhelp :foreground nil t))
+             (header-line
+              (substitute-command-keys
+               (concat
+                "## "
+                "`\\[company-posframe-quickhelp-scroll-up]':Scroll-Up  "
+                "`\\[company-posframe-quickhelp-scroll-down]':Scroll-Down  "
+                "`\\[company-posframe-quickhelp-hide]':Hide "
+                "##"))))
         (when doc
+          (with-current-buffer (get-buffer-create company-posframe-quickhelp-posframe-buffer)
+            (setq-local header-line-format header-line))
           (apply #'posframe-show
                  company-posframe-quickhelp-posframe-buffer
                  :string (propertize doc 'face 'company-posframe-quickhelp)
-                 :min-height
-                 (with-current-buffer company-posframe-buffer
-                   (frame-height posframe--frame))
+                 :height (- company-height 1)
+                 :min-width (length header-line)
+                 :min-height (max (- company-height 1)
+                                  company-posframe-quickhelp-minimum-height)
+                 :respect-header-line t
                  :background-color
-                 (if (eq bg 'unspecified)
+                 (if (eq background 'unspecified)
                      company-quickhelp-color-background
-                   bg)
+                   background)
                  :foreground-color
-                 (if (eq fg 'unspecified)
+                 (if (eq foreground 'unspecified)
                      company-quickhelp-color-foreground
-                   fg)
+                   foreground)
                  :position
                  (with-current-buffer company-posframe-buffer
                    (let ((pos posframe--last-posframe-pixel-position))
                      (cons (+ (car pos) (frame-pixel-width posframe--frame))
                            (cdr pos))))
                  company-posframe-quickhelp-show-params))))))
+
+(defun company-posframe-quickhelp-scroll-up (&optional arg)
+  (interactive "^P")
+  (when (posframe-workable-p)
+    (posframe-funcall company-posframe-quickhelp-posframe-buffer
+                      'scroll-up-command arg)))
+
+(defun company-posframe-quickhelp-scroll-down (&optional arg)
+  (interactive "^P")
+  (when (posframe-workable-p)
+    (posframe-funcall company-posframe-quickhelp-posframe-buffer
+                      'scroll-down-command arg)))
+
+(defun company-posframe-quickhelp-hide (&optional arg)
+  (interactive "^P")
+  (when (posframe-workable-p)
+    (posframe-hide company-posframe-quickhelp-posframe-buffer)))
+
+(define-key company-active-map (kbd "<f1>") 'company-posframe-quickhelp-scroll-up)
+(define-key company-active-map (kbd "<f2>") 'company-posframe-quickhelp-scroll-down)
+(define-key company-active-map (kbd "<f3>") 'company-posframe-quickhelp-hide)
 
 (advice-add 'company-quickhelp-frontend :override #'company-posframe-quickhelp-frontend)
 (advice-add 'company-quickhelp--show :override #'company-posframe-quickhelp--show)
