@@ -41,7 +41,7 @@
 (require 'company-posframe)
 
 (defface company-posframe-quickhelp
-  '((t :inherit highlight))
+  '((t :inherit default))
   "Face for company-posframe-quickhelp doc.
 Fix: need improve.")
 
@@ -49,8 +49,8 @@ Fix: need improve.")
   "The buffer which used by company-posframe-quickhelp.")
 
 (defvar company-posframe-quickhelp-show-params
-  (list :internal-border-width 0
-        :timeout 300
+  (list :internal-border-width 1
+        :timeout 15
         :internal-border-color "gray50"
         :no-properties nil
         :poshandler nil)
