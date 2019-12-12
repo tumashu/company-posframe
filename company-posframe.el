@@ -229,7 +229,8 @@ COMMAND: See `company-frontends'."
               (equal company-posframe--last-status
                      (list (selected-window)
                            (current-buffer))))
-    (company-posframe-hide)))
+    (company-posframe-hide)
+    (company-posframe-quickhelp-hide)))
 
 (defun company-posframe-quickhelp-frontend (command)
   "Advice function of `company-quickhelp-frontend'."
