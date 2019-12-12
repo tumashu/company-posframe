@@ -7,7 +7,7 @@
 ;; URL: https://github.com/tumashu/company-posframe
 ;; Version: 0.1.0
 ;; Keywords: abbrev, convenience, matching
-;; Package-Requires: ((emacs "26.0")(company "0.9.0")(posframe "0.1.0"))
+;; Package-Requires: ((emacs "26.0")(company "0.9.0")(posframe "0.1.0")(company-quickhelp "2.2.0"))
 
 ;; This file is part of GNU Emacs.
 
@@ -55,13 +55,6 @@
 ;;       desktop-minor-mode-table)
 ;; #+END_EXAMPLE
 
-;; *** Work better with company-quickhelp
-;; #+BEGIN_EXAMPLE
-;; (require 'company-quickhelp)
-;; (require 'company-posframe)
-;; (require 'company-posframe-quickhelp)
-;; #+END_EXAMPLE
-
 ;; ** Note
 ;; company-posframe.el is derived from Clément Pit-Claudel's
 ;; company-tooltip.el, which can be found at:
@@ -73,6 +66,7 @@
 ;; * company-posframe's code
 (require 'cl-lib)
 (require 'company)
+(require 'company-quickhelp)
 (require 'posframe)
 
 (defgroup company-posframe nil
@@ -121,8 +115,26 @@ Using current frame's font if it it nil."
   '((t :inherit font-lock-comment-face))
   "Face for the metadata footer (not the backend indicator).")
 
+(defface company-posframe-quickhelp
+  '((t :inherit default))
+  "Face for company-posframe-quickhelp doc.")
+
 (defvar company-posframe-buffer " *company-posframe-buffer*"
   "company-posframe's buffer which used by posframe.")
+
+;; When using hide buffer, for example " *abc*", the
+;; first showing quickhelp-buffer will let company candidate menu
+;; hide, do not know why, maybe an emacs bug ...
+(defvar company-posframe-quickhelp-buffer "*company-posframe-quickhelp-buffer*"
+  "The buffer which used by company-posframe-quickhelp.")
+
+(defvar company-posframe-quickhelp-show-params
+  (list :internal-border-width 1
+        :timeout 15
+        :internal-border-color "gray50"
+        :no-properties nil
+        :poshandler nil)
+  "List of parameters passed to `posframe-show'.")
 
 (defvar company-posframe-notification "")
 
@@ -220,6 +232,90 @@ COMMAND: See `company-frontends'."
                            (current-buffer))))
     (company-posframe-hide)))
 
+(defun company-posframe-quickhelp-frontend (command)
+  "Advice function of `company-quickhelp-frontend'."
+  (pcase command
+    (`post-command
+     (when (and company-quickhelp-delay
+                (not (string-match-p "^company-posframe-quickhelp-"
+                                     (symbol-name this-command))))
+       (company-quickhelp--set-timer)
+       (company-posframe-quickhelp-hide)))
+    (`hide
+     (when company-quickhelp-delay
+       (company-quickhelp--cancel-timer))
+     (company-posframe-quickhelp-hide))))
+
+(defun company-posframe-quickhelp-show ()
+  "Advice function of `company-quickhelp--show'."
+  (when (posframe-workable-p)
+    (company-quickhelp--cancel-timer)
+    (while-no-input
+      (let* ((selected (nth company-selection company-candidates))
+             (doc (let ((inhibit-message t))
+                    (company-quickhelp--doc selected)))
+             (height
+              (max (+ company-tooltip-limit
+                      (if company-posframe-show-indicator 1 0)
+                      (if company-posframe-show-metadata 1 0)
+                      -1)
+                   (with-current-buffer company-posframe-buffer
+                     (- (frame-height posframe--frame) 1))))
+             (background (face-attribute 'company-posframe-quickhelp :background nil t))
+             (foreground (face-attribute 'company-posframe-quickhelp :foreground nil t))
+             (header-line
+              (substitute-command-keys
+               (concat
+                "## "
+                "`\\[company-posframe-quickhelp-scroll-up]':Scroll-Up  "
+                "`\\[company-posframe-quickhelp-scroll-down]':Scroll-Down  "
+                "`\\[company-posframe-quickhelp-hide]':Hide "
+                "##"))))
+        (when doc
+          (with-current-buffer (get-buffer-create company-posframe-quickhelp-buffer)
+            (setq-local header-line-format header-line))
+          (apply #'posframe-show
+                 company-posframe-quickhelp-buffer
+                 :string (propertize doc 'face 'company-posframe-quickhelp)
+                 :min-width (length header-line)
+                 :min-height height
+                 :height height
+                 :respect-header-line t
+                 ;; When first show quickhelp's posframe, it seem using wrong height,
+                 ;; maybe header-line's reason, just refresh again, ugly but useful :-).
+                 :refresh 0.5
+                 :background-color
+                 (if (eq background 'unspecified)
+                     company-quickhelp-color-background
+                   background)
+                 :foreground-color
+                 (if (eq foreground 'unspecified)
+                     company-quickhelp-color-foreground
+                   foreground)
+                 :position
+                 (with-current-buffer company-posframe-buffer
+                   (let ((pos posframe--last-posframe-pixel-position))
+                     (cons (+ (car pos) (frame-pixel-width posframe--frame))
+                           (cdr pos))))
+                 company-posframe-quickhelp-show-params))))))
+
+(defun company-posframe-quickhelp-hide (&optional arg)
+  (interactive "^P")
+  (when (posframe-workable-p)
+    (posframe-hide company-posframe-quickhelp-buffer)))
+
+(defun company-posframe-quickhelp-scroll-up (&optional arg)
+  (interactive "^P")
+  (when (posframe-workable-p)
+    (posframe-funcall company-posframe-quickhelp-buffer
+                      'scroll-up-command arg)))
+
+(defun company-posframe-quickhelp-scroll-down (&optional arg)
+  (interactive "^P")
+  (when (posframe-workable-p)
+    (posframe-funcall company-posframe-quickhelp-buffer
+                      'scroll-down-command arg)))
+
 ;;;###autoload
 (define-minor-mode company-posframe-mode
   "company-posframe minor mode."
@@ -235,14 +331,30 @@ COMMAND: See `company-frontends'."
                       :override #'company-posframe-frontend)
           (advice-add #'company-pseudo-tooltip-unless-just-one-frontend
                       :override #'company-posframe-unless-just-one-frontend)
+          (advice-add 'company-quickhelp-frontend
+                      :override #'company-posframe-quickhelp-frontend)
+          (advice-add 'company-quickhelp--show
+                      :override #'company-posframe-quickhelp-show)
+          ;; Quickhelp keys.
+          (define-key company-active-map (kbd "<f2>") 'company-posframe-quickhelp-scroll-up)
+          (define-key company-active-map (kbd "<f3>") 'company-posframe-quickhelp-scroll-down)
+          (define-key company-active-map (kbd "<f4>") 'company-posframe-quickhelp-hide)
           ;; When user switches window, child-frame should be hidden.
           (add-hook 'window-configuration-change-hook #'company-posframe-window-change)
           (message company-posframe-notification))
       (posframe-delete company-posframe-buffer)
+      (posframe-delete company-posframe-quickhelp-buffer)
       (advice-remove #'company-pseudo-tooltip-frontend
                      #'company-posframe-frontend)
       (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend
                      #'company-posframe-unless-just-one-frontend)
+      (advice-remove 'company-quickhelp-frontend
+                     #'company-posframe-quickhelp-frontend)
+      (advice-remove 'company-quickhelp--show
+                     #'company-posframe-quickhelp-show)
+      (define-key company-active-map (kbd "<f2>") nil)
+      (define-key company-active-map (kbd "<f3>") nil)
+      (define-key company-active-map (kbd "<f4>") nil)
       (remove-hook 'window-configuration-change-hook #'company-posframe-window-change))))
 
 (provide 'company-posframe)
