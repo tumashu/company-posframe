@@ -3,21 +3,20 @@ Note: this file is auto converted from company-posframe.el by [el2org](https://g
 
 # &#30446;&#24405;
 
-1.  [company-posframe README](#org74d467d)
-    1.  [What is company-posframe](#org1437d45)
-    2.  [How to use company-posframe](#orge5fbefd)
-    3.  [Tips](#org2b1e129)
-        1.  [Work better with desktop.el](#orge3339a4)
-        2.  [Work better with company-quickhelp](#org331ba19)
-    4.  [Note](#org685c4a7)
+1.  [company-posframe README](#orge06ae94)
+    1.  [What is company-posframe](#org68ae027)
+    2.  [How to use company-posframe](#orgf004a70)
+    3.  [Tips](#orgdfa33d0)
+        1.  [Work better with desktop.el](#org1a7e07d)
+    4.  [Note](#org3b52f89)
 
 
-<a id="org74d467d"></a>
+<a id="orge06ae94"></a>
 
 # company-posframe README
 
 
-<a id="org1437d45"></a>
+<a id="org68ae027"></a>
 
 ## What is company-posframe
 
@@ -34,7 +33,7 @@ It has the following feature:
 1.  company-quickhelp
 
 
-<a id="orge5fbefd"></a>
+<a id="orgf004a70"></a>
 
 ## How to use company-posframe
 
@@ -42,12 +41,12 @@ It has the following feature:
     (company-posframe-mode 1)
 
 
-<a id="org2b1e129"></a>
+<a id="orgdfa33d0"></a>
 
 ## Tips
 
 
-<a id="orge3339a4"></a>
+<a id="org1a7e07d"></a>
 
 ### Work better with desktop.el
 
@@ -58,16 +57,7 @@ The below code let desktop.el not record the company-posframe-mode
           desktop-minor-mode-table)
 
 
-<a id="org331ba19"></a>
-
-### Work better with company-quickhelp
-
-    (require 'company-quickhelp)
-    (require 'company-posframe)
-    (require 'company-posframe-quickhelp)
-
-
-<a id="org685c4a7"></a>
+<a id="org3b52f89"></a>
 
 ## Note
 
