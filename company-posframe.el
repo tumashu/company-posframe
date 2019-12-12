@@ -122,10 +122,7 @@ Using current frame's font if it it nil."
 (defvar company-posframe-buffer " *company-posframe-buffer*"
   "company-posframe's buffer which used by posframe.")
 
-;; When using hide buffer, for example " *abc*", the
-;; first showing quickhelp-buffer will let company candidate menu
-;; hide, do not know why, maybe an emacs bug ...
-(defvar company-posframe-quickhelp-buffer "*company-posframe-quickhelp-buffer*"
+(defvar company-posframe-quickhelp-buffer " *company-posframe-quickhelp-buffer*"
   "The buffer which used by company-posframe-quickhelp.")
 
 (defvar company-posframe-quickhelp-show-params
@@ -226,7 +223,9 @@ COMMAND: See `company-frontends'."
 
 (defun company-posframe-window-change ()
   "Hide posframe on window change."
-  (unless (or (string= (buffer-name) company-posframe-buffer)
+  (unless (or (member (buffer-name)
+                      (list company-posframe-buffer
+                            company-posframe-quickhelp-buffer))
               (equal company-posframe--last-status
                      (list (selected-window)
                            (current-buffer))))
