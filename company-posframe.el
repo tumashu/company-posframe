@@ -35,9 +35,6 @@
 ;; 1. It is fast enough for daily use.
 ;; 2. It works well with CJK language.
 
-;; *At the moment*, company-posframe can not work well with:
-;; 1. company-posframe-quickhelp
-
 ;; ** How to use company-posframe
 
 ;; #+BEGIN_EXAMPLE
