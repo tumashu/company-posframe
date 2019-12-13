@@ -35,6 +35,8 @@
 ;; 1. It is fast enough for daily use.
 ;; 2. It works well with CJK language.
 
+;; [[./snapshots/company-posframe.png]]
+
 ;; ** How to use company-posframe
 
 ;; #+BEGIN_EXAMPLE
