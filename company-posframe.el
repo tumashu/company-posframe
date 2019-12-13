@@ -213,7 +213,10 @@ COMMAND: See `company-frontends'."
     (pre-command nil)
     (hide (company-posframe-hide))
     (update (company-posframe-show))
-    (post-command (company-posframe-show))))
+    (post-command
+     (when (not (string-match-p "^company-posframe-quickhelp-"
+                                (symbol-name this-command)))
+       (company-posframe-show)))))
 
 (defun company-posframe-unless-just-one-frontend (command)
   "`company-posframe-frontend', but not shown for single candidates."
