@@ -315,8 +315,7 @@ just grab the first candidate and press forward."
         doc))))
 
 (defun company-posframe-quickhelp-set-timer ()
-  (when (or (null company-posframe-quickhelp-timer)
-            (eq this-command #'company-posframe-quickhelp-manual-begin))
+  (when (null company-posframe-quickhelp-timer)
     (setq company-posframe-quickhelp-timer
           (run-with-idle-timer company-posframe-quickhelp-delay nil
                                'company-posframe-quickhelp-show))))
