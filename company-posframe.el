@@ -104,7 +104,7 @@ Using current frame's font if it it nil."
   :group 'company-posframe
   :type 'function)
 
-(defcustom company-posframe-quickhelp-delay 0.5
+(defcustom company-posframe-quickhelp-delay 1
   "Delay, in seconds, before the quickhelp popup appears.
 
 If set to nil the popup won't automatically appear, but can still
@@ -367,7 +367,7 @@ just grab the first candidate and press forward."
                :position
                (with-current-buffer company-posframe-buffer
                  (let ((pos posframe--last-posframe-pixel-position))
-                   (cons (+ (car pos) (frame-pixel-width posframe--frame))
+                   (cons (car pos) ;(+ (car pos) (frame-pixel-width posframe--frame))
                          (cdr pos))))
                company-posframe-quickhelp-show-params)))))
 
