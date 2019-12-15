@@ -352,7 +352,10 @@ just grab the first candidate and press forward."
         (apply #'posframe-show
                company-posframe-quickhelp-buffer
                :string (propertize doc 'face 'company-posframe-quickhelp)
-               :min-width (min 60 (length header-line))
+               :width (let ((n (apply #'max (mapcar #'string-width
+                                                    (split-string doc "\n+")))))
+                        (max (length header-line) (min fill-column n)))
+               :min-width (length header-line)
                :min-height height
                :height height
                :respect-header-line t
