@@ -138,7 +138,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "Quickhelp idle timer.")
 
 (defvar company-posframe-quickhelp-show-params
-  (list :poshandler #'company-posframe-quickhelp-poshandler
+  (list :poshandler #'company-posframe-quickhelp-right-poshandler
         :internal-border-width 1
         :timeout 60
         :internal-border-color "gray50"
