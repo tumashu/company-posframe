@@ -138,7 +138,8 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "Quickhelp idle timer.")
 
 (defvar company-posframe-quickhelp-show-params
-  (list :internal-border-width 1
+  (list :poshandler #'company-posframe-quickhelp-poshandler
+        :internal-border-width 1
         :timeout 60
         :internal-border-color "gray50"
         :no-properties nil
@@ -364,12 +365,13 @@ just grab the first candidate and press forward."
                :refresh 0.5
                :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
                :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
-               :position
-               (with-current-buffer company-posframe-buffer
-                 (let ((pos posframe--last-posframe-pixel-position))
-                   (cons (car pos) ;(+ (car pos) (frame-pixel-width posframe--frame))
-                         (cdr pos))))
                company-posframe-quickhelp-show-params)))))
+
+(defun company-posframe-quickhelp-right-poshandler (_info)
+  (with-current-buffer company-posframe-buffer
+    (let ((pos posframe--last-posframe-pixel-position))
+      (cons (+ (car pos) (frame-pixel-width posframe--frame))
+            (cdr pos)))))
 
 (defun company-posframe-quickhelp-hide ()
   (posframe-hide company-posframe-quickhelp-buffer))
