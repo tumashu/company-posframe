@@ -69,6 +69,7 @@
 (require 'cl-lib)
 (require 'company)
 (require 'posframe)
+(require 'subr-x)
 
 (defgroup company-posframe nil
   "Use a child-frame as company candidate menu"
