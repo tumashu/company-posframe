@@ -79,7 +79,8 @@
 (defcustom company-posframe-font nil
   "The font used by company-posframe's frame.
 Using current frame's font if it it nil."
-  :group 'company-posframe)
+  :group 'company-posframe
+  :type 'face)
 
 (defcustom company-posframe-lighter " company-posframe"
   "The lighter string used by `company-posframe-mode'."
