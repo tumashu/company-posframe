@@ -69,6 +69,7 @@
 (require 'cl-lib)
 (require 'company)
 (require 'posframe)
+(require 'subr-x)
 
 (defgroup company-posframe nil
   "Use a child-frame as company candidate menu"
@@ -78,11 +79,13 @@
 (defcustom company-posframe-font nil
   "The font used by company-posframe's frame.
 Using current frame's font if it it nil."
-  :group 'company-posframe)
+  :group 'company-posframe
+  :type 'face)
 
 (defcustom company-posframe-lighter " company-posframe"
   "The lighter string used by `company-posframe-mode'."
-  :group 'company-posframe)
+  :group 'company-posframe
+  :type 'string)
 
 (defcustom company-posframe-show-indicator t
   "Display an indicator for backends in the mode line of the posframe."
