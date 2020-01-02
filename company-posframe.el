@@ -131,6 +131,10 @@ be triggered manually using `company-posframe-quickhelp-show'."
   '((t :inherit default))
   "Face for company-posframe-quickhelp doc.")
 
+(defface company-posframe-quickhelp-header
+  '((t :inherit header-line))
+  "Face for company-posframe-quickhelp header.")
+
 (defvar company-posframe-buffer " *company-posframe-buffer*"
   "company-posframe's buffer which used by posframe.")
 
@@ -312,9 +316,18 @@ just grab the first candidate and press forward."
 (defun company-posframe-quickhelp-doc (selected)
   (cl-letf (((symbol-function 'completing-read)
              #'company-posframe-quickhelp-completing-read))
-    (let* ((doc (company-posframe-quickhelp-fetch-docstring selected)))
-      (unless (member doc '(nil ""))
-        doc))))
+    (let* ((header
+            (substitute-command-keys
+             (concat
+              "## "
+              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-toggle]:Show/Hide  "
+              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
+              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
+              "##\n")))
+           (body (company-posframe-quickhelp-fetch-docstring selected))
+           (doc (concat (propertize header 'face 'company-posframe-quickhelp-header)
+                        (propertize body 'face 'company-posframe-quickhelp))))
+      doc)))
 
 (defun company-posframe-quickhelp-set-timer ()
   (when (null company-posframe-quickhelp-timer)
@@ -333,37 +346,24 @@ just grab the first candidate and press forward."
     (let* ((selected (nth company-selection company-candidates))
            (doc (let ((inhibit-message t))
                   (company-posframe-quickhelp-doc selected)))
+           (width
+            (let ((n (apply #'max (mapcar #'string-width
+                                          (split-string doc "\n+")))))
+              (+ (min fill-column n) 1)))
            (height
             (max (+ company-tooltip-limit
                     (if company-posframe-show-indicator 1 0)
-                    (if company-posframe-show-metadata 1 0)
-                    -1)
+                    (if company-posframe-show-metadata 1 0))
                  (with-current-buffer company-posframe-buffer
-                   (- (frame-height posframe--frame) 1))))
-           (header-line
-            (substitute-command-keys
-             (concat
-              "## "
-              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-toggle]:Show/Hide  "
-              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
-              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
-              "##"))))
+                   (frame-height posframe--frame)))))
       (when doc
-        (with-current-buffer (get-buffer-create company-posframe-quickhelp-buffer)
-          (setq-local header-line-format header-line))
         (apply #'posframe-show
                company-posframe-quickhelp-buffer
-               :string (propertize doc 'face 'company-posframe-quickhelp)
-               :width (let ((n (apply #'max (mapcar #'string-width
-                                                    (split-string doc "\n+")))))
-                        (max (length header-line) (min fill-column n)))
-               :min-width (length header-line)
+               :string doc
+               :width width
+               :min-width width
                :min-height height
                :height height
-               :respect-header-line t
-               ;; When first show quickhelp's posframe, it seem using wrong height,
-               ;; maybe header-line's reason, just refresh again, ugly but useful :-).
-               :refresh 0.5
                :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
                :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
                company-posframe-quickhelp-show-params)))))
