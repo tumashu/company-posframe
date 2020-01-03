@@ -144,6 +144,10 @@ be triggered manually using `company-posframe-quickhelp-show'."
 (defvar-local company-posframe-quickhelp-timer nil
   "Quickhelp idle timer.")
 
+(defvar company-posframe-show-params nil
+  "List of extra parameters passed to `posframe-show' in
+  `company-posframe-show'.")
+
 (defvar company-posframe-quickhelp-show-params
   (list :poshandler #'company-posframe-quickhelp-right-poshandler
         :internal-border-width 1
@@ -213,17 +217,18 @@ be triggered manually using `company-posframe-quickhelp-show'."
       (when company-posframe-show-indicator
         (setq-local mode-line-format `(,(substring backend-names 0
                                                    (min width (length backend-names)))))))
-    (posframe-show buffer
-                   :string contents
-                   :position (- (point) (length company-prefix))
-                   :min-height (+ height
-                                  (if company-posframe-show-indicator 1 0))
-                   :min-width width
-                   :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
-                   :respect-mode-line company-posframe-show-indicator
-                   :font company-posframe-font
-                   :min-width company-tooltip-minimum-width
-                   :background-color (face-attribute 'company-tooltip :background))))
+    (apply #'posframe-show buffer
+           :string contents
+           :position (- (point) (length company-prefix))
+           :min-height (+ height
+                          (if company-posframe-show-indicator 1 0))
+           :min-width width
+           :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
+           :respect-mode-line company-posframe-show-indicator
+           :font company-posframe-font
+           :min-width company-tooltip-minimum-width
+           :background-color (face-attribute 'company-tooltip :background)
+           company-posframe-show-params)))
 
 (defun company-posframe-hide ()
   "Hide company-posframe candidate menu."
