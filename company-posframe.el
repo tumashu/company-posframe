@@ -132,7 +132,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "Face for company-posframe-quickhelp doc.")
 
 (defface company-posframe-quickhelp-header
-  '((t :inherit header-line))
+  '((t :inherit header-line :box nil :extend t))
   "Face for company-posframe-quickhelp header.")
 
 (defvar company-posframe-buffer " *company-posframe-buffer*"
