@@ -181,6 +181,13 @@ be triggered manually using `company-posframe-quickhelp-show'."
     keymap)
   "Keymap that is enabled during an active completion in posframe.")
 
+(defun company-posframe-enable-overriding-keymap (keymap)
+  "Advice function of `company-enable-overriding-keymap'."
+  (company-uninstall-map)
+  (if (eq keymap company-active-map)
+      (setq company-my-keymap company-posframe-active-map)
+    (setq company-my-keymap keymap)))
+
 (defun company-posframe-format-backend-name (backend)
   "Format BACKEND for displaying in the modeline."
   (propertize (cl-typecase backend
@@ -254,12 +261,7 @@ COMMAND: See `company-frontends'."
          (company-posframe-quickhelp-cancel-timer))
        (company-posframe-quickhelp-hide)
        (company-posframe-hide))
-      (update
-       ;; Important: This line is very important, we need to override
-       ;; company-active-map again, this is do the job of
-       ;; `company--perform'.
-       (company-enable-overriding-keymap company-posframe-active-map)
-       (company-posframe-show))
+      (update (company-posframe-show))
       (post-command
        (when (not run-quickhelp-command-p)
          (company-posframe-show))))))
@@ -412,6 +414,8 @@ just grab the first candidate and press forward."
       (message "company-posframe can not work in current emacs environment.")
     (if company-posframe-mode
         (progn
+          (advice-add #'company-enable-overriding-keymap
+                      :override #'company-posframe-enable-overriding-keymap)
           (advice-add #'company-pseudo-tooltip-frontend
                       :override #'company-posframe-frontend)
           (advice-add #'company-pseudo-tooltip-unless-just-one-frontend
@@ -421,6 +425,8 @@ just grab the first candidate and press forward."
           (message company-posframe-notification))
       (posframe-delete company-posframe-buffer)
       (posframe-delete company-posframe-quickhelp-buffer)
+      (advice-remove #'company-enable-overriding-keymap
+                     #'company-posframe-enable-overriding-keymap)
       (advice-remove #'company-pseudo-tooltip-frontend
                      #'company-posframe-frontend)
       (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend
