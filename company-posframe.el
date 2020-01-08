@@ -181,12 +181,14 @@ be triggered manually using `company-posframe-quickhelp-show'."
     keymap)
   "Keymap that is enabled during an active completion in posframe.")
 
-(defun company-posframe-enable-overriding-keymap (keymap)
+(defun company-posframe-enable-overriding-keymap (orig-func keymap)
   "Advice function of `company-enable-overriding-keymap'."
-  (company-uninstall-map)
-  (if (eq keymap company-active-map)
-      (setq company-my-keymap company-posframe-active-map)
-    (setq company-my-keymap keymap)))
+  (if (not (posframe-workable-p))
+      (funcall orig-func keymap)
+    (company-uninstall-map)
+    (if (eq keymap company-active-map)
+        (setq company-my-keymap company-posframe-active-map)
+      (setq company-my-keymap keymap))))
 
 (defun company-posframe-format-backend-name (backend)
   "Format BACKEND for displaying in the modeline."
@@ -241,47 +243,52 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "Hide company-posframe candidate menu."
   (posframe-hide company-posframe-buffer))
 
-(defun company-posframe-frontend (command)
+(defun company-posframe-frontend (orig-func command)
   "`company-mode' frontend using child-frame.
 COMMAND: See `company-frontends'."
-  (setq company-posframe-last-status
-        (list (selected-window)
-              (current-buffer)))
-  (let ((run-quickhelp-command-p
-         (string-match-p "^company-posframe-quickhelp-"
-                         (symbol-name this-command))))
-    (cl-case command
-      (pre-command
-       (when (and company-posframe-quickhelp-delay
-                  (not run-quickhelp-command-p))
-         (company-posframe-quickhelp-set-timer)
-         (company-posframe-quickhelp-hide)))
-      (hide
-       (when company-posframe-quickhelp-delay
-         (company-posframe-quickhelp-cancel-timer))
-       (company-posframe-quickhelp-hide)
-       (company-posframe-hide))
-      (update (company-posframe-show))
-      (post-command
-       (when (not run-quickhelp-command-p)
-         (company-posframe-show))))))
+  (if (not (posframe-workable-p))
+      (funcall orig-func command)
+    (setq company-posframe-last-status
+          (list (selected-window)
+                (current-buffer)))
+    (let ((run-quickhelp-command-p
+           (string-match-p "^company-posframe-quickhelp-"
+                           (symbol-name this-command))))
+      (cl-case command
+        (pre-command
+         (when (and company-posframe-quickhelp-delay
+                    (not run-quickhelp-command-p))
+           (company-posframe-quickhelp-set-timer)
+           (company-posframe-quickhelp-hide)))
+        (hide
+         (when company-posframe-quickhelp-delay
+           (company-posframe-quickhelp-cancel-timer))
+         (company-posframe-quickhelp-hide)
+         (company-posframe-hide))
+        (update (company-posframe-show))
+        (post-command
+         (when (not run-quickhelp-command-p)
+           (company-posframe-show)))))))
 
-(defun company-posframe-unless-just-one-frontend (command)
+(defun company-posframe-unless-just-one-frontend (orig-func command)
   "`company-posframe-frontend', but not shown for single candidates."
-  (if (company--show-inline-p)
-      (company-posframe-hide)
-    (company-posframe-frontend command)))
+  (if (not (posframe-workable-p))
+      (funcall orig-func command)
+    (if (company--show-inline-p)
+        (company-posframe-hide)
+      (company-posframe-frontend command))))
 
 (defun company-posframe-window-change ()
   "Hide posframe on window change."
-  (unless (or (member (buffer-name)
-                      (list company-posframe-buffer
-                            company-posframe-quickhelp-buffer))
-              (equal company-posframe-last-status
-                     (list (selected-window)
-                           (current-buffer))))
-    (company-posframe-hide)
-    (company-posframe-quickhelp-hide)))
+  (when (posframe-workable-p)
+    (unless (or (member (buffer-name)
+                        (list company-posframe-buffer
+                              company-posframe-quickhelp-buffer))
+                (equal company-posframe-last-status
+                       (list (selected-window)
+                             (current-buffer))))
+      (company-posframe-hide)
+      (company-posframe-quickhelp-hide))))
 
 (defun company-posframe-quickhelp-skip-footers-backwards ()
   "Skip backwards over footers and blank lines."
@@ -410,29 +417,27 @@ just grab the first candidate and press forward."
   :require 'company-posframe
   :group 'company-posframe
   :lighter company-posframe-lighter
-  (if (not (posframe-workable-p))
-      (message "company-posframe can not work in current emacs environment.")
-    (if company-posframe-mode
-        (progn
-          (advice-add #'company-enable-overriding-keymap
-                      :override #'company-posframe-enable-overriding-keymap)
-          (advice-add #'company-pseudo-tooltip-frontend
-                      :override #'company-posframe-frontend)
-          (advice-add #'company-pseudo-tooltip-unless-just-one-frontend
-                      :override #'company-posframe-unless-just-one-frontend)
-          ;; When user switches window, child-frame should be hidden.
-          (add-hook 'window-configuration-change-hook #'company-posframe-window-change)
-          (message company-posframe-notification))
-      (posframe-delete company-posframe-buffer)
-      (posframe-delete company-posframe-quickhelp-buffer)
-      (advice-remove #'company-enable-overriding-keymap
-                     #'company-posframe-enable-overriding-keymap)
-      (advice-remove #'company-pseudo-tooltip-frontend
-                     #'company-posframe-frontend)
-      (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend
-                     #'company-posframe-unless-just-one-frontend)
-      (company-posframe-quickhelp-cancel-timer)
-      (remove-hook 'window-configuration-change-hook #'company-posframe-window-change))))
+  (if company-posframe-mode
+      (progn
+        (advice-add #'company-enable-overriding-keymap
+                    :around #'company-posframe-enable-overriding-keymap)
+        (advice-add #'company-pseudo-tooltip-frontend
+                    :around #'company-posframe-frontend)
+        (advice-add #'company-pseudo-tooltip-unless-just-one-frontend
+                    :around #'company-posframe-unless-just-one-frontend)
+        ;; When user switches window, child-frame should be hidden.
+        (add-hook 'window-configuration-change-hook #'company-posframe-window-change)
+        (message company-posframe-notification))
+    (posframe-delete company-posframe-buffer)
+    (posframe-delete company-posframe-quickhelp-buffer)
+    (advice-remove #'company-enable-overriding-keymap
+                   #'company-posframe-enable-overriding-keymap)
+    (advice-remove #'company-pseudo-tooltip-frontend
+                   #'company-posframe-frontend)
+    (advice-remove #'company-pseudo-tooltip-unless-just-one-frontend
+                   #'company-posframe-unless-just-one-frontend)
+    (company-posframe-quickhelp-cancel-timer)
+    (remove-hook 'window-configuration-change-hook #'company-posframe-window-change)))
 
 (provide 'company-posframe)
 
