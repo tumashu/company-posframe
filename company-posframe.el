@@ -276,7 +276,7 @@ COMMAND: See `company-frontends'."
       (funcall orig-func command)
     (if (company--show-inline-p)
         (company-posframe-hide)
-      (company-posframe-frontend command))))
+      (company-posframe-frontend 'ignore command))))
 
 (defun company-posframe-window-change ()
   "Hide posframe on window change."
