@@ -361,28 +361,28 @@ just grab the first candidate and press forward."
   (while-no-input
     (let* ((selected (nth company-selection company-candidates))
            (doc (let ((inhibit-message t))
-                  (company-posframe-quickhelp-doc selected)))
-           (width
-            (let ((n (apply #'max (mapcar #'string-width
-                                          (split-string doc "\n+")))))
-              (+ (min fill-column n) 1)))
-           (height
-            (max (+ company-tooltip-limit
-                    (if company-posframe-show-indicator 1 0)
-                    (if company-posframe-show-metadata 1 0))
-                 (with-current-buffer company-posframe-buffer
-                   (frame-height posframe--frame)))))
+                  (company-posframe-quickhelp-doc selected))))
       (when doc
-        (apply #'posframe-show
-               company-posframe-quickhelp-buffer
-               :string doc
-               :width width
-               :min-width width
-               :min-height height
-               :height height
-               :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
-               :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
-               company-posframe-quickhelp-show-params)))))
+        (let* ((width
+                (let ((n (apply #'max (mapcar #'string-width
+                                              (split-string doc "\n+")))))
+                  (+ (min fill-column n) 1)))
+               (height
+                (max (+ company-tooltip-limit
+                        (if company-posframe-show-indicator 1 0)
+                        (if company-posframe-show-metadata 1 0))
+                     (with-current-buffer company-posframe-buffer
+                       (frame-height posframe--frame)))))
+          (apply #'posframe-show
+                 company-posframe-quickhelp-buffer
+                 :string doc
+                 :width width
+                 :min-width width
+                 :min-height height
+                 :height height
+                 :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
+                 :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
+                 company-posframe-quickhelp-show-params))))))
 
 (defun company-posframe-quickhelp-right-poshandler (_info)
   (with-current-buffer company-posframe-buffer
