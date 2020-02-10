@@ -117,6 +117,11 @@ be triggered manually using `company-posframe-quickhelp-show'."
   :type '(choice (number :tag "Delay in seconds")
                  (const :tag "Don't popup help automatically" nil)))
 
+(defcustom company-posframe-quickhelp-show-header t
+  "Display a header for the posframe quickhelp frame."
+  :group 'company-posframe
+  :type 'boolean)
+
 (defface company-posframe-inactive-backend-name
   '((t :inherit mode-line))
   "Face for the active backend name in the header line.")
@@ -360,13 +365,14 @@ just grab the first candidate and press forward."
   (cl-letf (((symbol-function 'completing-read)
              #'company-posframe-quickhelp-completing-read))
     (let* ((header
-            (substitute-command-keys
-             (concat
-              "## "
-              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-toggle]:Show/Hide  "
-              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
-              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
-              "##\n")))
+            (if company-posframe-quickhelp-show-header
+                (substitute-command-keys
+                 (concat
+                  "## "
+                  "\\<company-posframe-active-map>\\[company-posframe-quickhelp-toggle]:Show/Hide  "
+                  "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
+                  "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
+                  "##\n")) ""))
            (body (company-posframe-quickhelp-fetch-docstring selected))
            (doc (concat (propertize header 'face 'company-posframe-quickhelp-header)
                         (propertize body 'face 'company-posframe-quickhelp))))
