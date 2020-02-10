@@ -102,6 +102,11 @@ Using current frame's font if it it nil."
   :group 'company-posframe
   :type 'string)
 
+(defcustom company-posframe-quickhelp-x-offset 0
+  "Horizontal offset for company posframe quickhelp."
+  :group 'company-posframe
+  :type 'integer)
+
 (defcustom company-posframe-backend-format-function #'company-posframe-format-backend-name-active-first
   "Function used to format each backend in the indicator."
   :group 'company-posframe
@@ -420,7 +425,7 @@ just grab the first candidate and press forward."
 (defun company-posframe-quickhelp-right-poshandler (_info)
   (with-current-buffer company-posframe-buffer
     (let ((pos posframe--last-posframe-pixel-position))
-      (cons (+ (car pos) (frame-pixel-width posframe--frame))
+      (cons (+ (car pos) (+ company-posframe-quickhelp-x-offset (frame-pixel-width posframe--frame)))
             (cdr pos)))))
 
 (defun company-posframe-quickhelp-hide ()
