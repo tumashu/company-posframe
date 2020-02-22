@@ -247,7 +247,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
          (lines (company--create-lines company-selection height))
          (backend-names (when company-posframe-show-indicator
                           (funcall company-posframe-backend-format-function company-backends company-posframe-backend-separator)))
-         (width (length (car lines)))
+         (width (max (min (length (car lines)) company-tooltip-maximum-width) company-tooltip-minimum-width))
          (contents (concat (mapconcat #'identity lines "\n")
                            (if meta
                                (concat "\n" (propertize (if (> (length meta) width)
@@ -268,11 +268,11 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :position (- (point) (length company-prefix))
            :min-height (+ height
                           (if company-posframe-show-indicator 1 0))
-           :min-width width
+           :min-width company-tooltip-minimum-width
+           :max-width company-tooltip-maximum-width
            :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
            :respect-mode-line company-posframe-show-indicator
            :font company-posframe-font
-           :min-width company-tooltip-minimum-width
            :background-color (face-attribute 'company-tooltip :background)
            company-posframe-show-params)))
 
