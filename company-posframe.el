@@ -289,8 +289,9 @@ COMMAND: See `company-frontends'."
           (list (selected-window)
                 (current-buffer)))
     (let ((run-quickhelp-command-p
-           (string-match-p "^company-posframe-quickhelp-"
-                           (symbol-name this-command))))
+           (and (symbolp this-command)
+                (string-match-p "^company-posframe-quickhelp-"
+                                (symbol-name this-command)))))
       (cl-case command
         (pre-command
          (when (and company-posframe-quickhelp-delay
