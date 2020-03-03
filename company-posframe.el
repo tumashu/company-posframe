@@ -374,7 +374,7 @@ just grab the first candidate and press forward."
               (cl-letf (((symbol-function 'completing-read)
                          #'company-posframe-quickhelp-completing-read))
                 (let* ((header
-                        (if company-posframe-quickhelp-show-header
+                        (if 
                             (substitute-command-keys
                              (concat
                               "## "
@@ -382,7 +382,7 @@ just grab the first candidate and press forward."
                               "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
                               "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
                               "##\n")) ""))
-                       (doc (concat (propertize header 'face 'company-posframe-quickhelp-header)
+                       (doc (concat (when header (propertize header 'face 'company-posframe-quickhelp-header))
                                     (propertize body 'face 'company-posframe-quickhelp))))
                   doc)))))
     doc))
