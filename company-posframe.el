@@ -368,24 +368,21 @@ just grab the first candidate and press forward."
               (buffer-string))))))))
 
 (defun company-posframe-quickhelp-doc (selected)
-  (let* ((body (company-posframe-quickhelp-fetch-docstring selected))
-         (doc
-          (if body
-              (cl-letf (((symbol-function 'completing-read)
-                         #'company-posframe-quickhelp-completing-read))
-                (let* ((header
-                        (if company-posframe-quickhelp-show-header
-                            (substitute-command-keys
-                             (concat
-                              "## "
-                              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-toggle]:Show/Hide  "
-                              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
-                              "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
-                              "##\n")) ""))
-                       (doc (concat (propertize header 'face 'company-posframe-quickhelp-header)
-                                    (propertize body 'face 'company-posframe-quickhelp))))
-                  doc)))))
-    doc))
+  (when-let ((body (company-posframe-quickhelp-fetch-docstring selected)))
+    (cl-letf* (((symbol-function 'completing-read)
+                #'company-posframe-quickhelp-completing-read)
+               (header
+                (if company-posframe-quickhelp-show-header
+                    (substitute-command-keys
+                     (concat
+                      "## "
+                      "\\<company-posframe-active-map>\\[company-posframe-quickhelp-toggle]:Show/Hide  "
+                      "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-up]:Scroll-Up  "
+                      "\\<company-posframe-active-map>\\[company-posframe-quickhelp-scroll-down]:Scroll-Down "
+                      "##\n"))
+                  "")))
+      (concat (propertize header 'face 'company-posframe-quickhelp-header)
+              body))))
 
 (defun company-posframe-quickhelp-set-timer ()
   (when (null company-posframe-quickhelp-timer)
