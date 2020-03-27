@@ -482,8 +482,4 @@ just grab the first candidate and press forward."
 
 (provide 'company-posframe)
 
-;; Local Variables:
-;; coding: utf-8-unix
-;; End:
-
 ;;; company-posframe.el ends here
