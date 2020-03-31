@@ -1,4 +1,4 @@
-;;; company-posframe.el --- Use a posframe as company candidate menu
+;;; company-posframe.el --- Use a posframe as company candidate menu       -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2019 Clément Pit-Claudel, Feng Shu, Lars Andersen
 
@@ -202,20 +202,20 @@ be triggered manually using `company-posframe-quickhelp-show'."
         (setq company-my-keymap company-posframe-active-map)
       (setq company-my-keymap keymap))))
 
-(defun company-posframe-format-backend-name-active-first (backends separator)
+(defun company-posframe-format-backend-name-active-first (_backends separator)
   "Format BACKEND for displaying in the modeline, displays active backend first"
-  (let (active
-        inactive)
-
+  (let (active inactive)
     (dolist (backend company-backends)
       (if (eq backend company-backend)
-          (add-to-list 'active (propertize (company-posframe-format-backend-name-active-first-helper backend)
-                                           'face 'company-posframe-active-backend-name))
-        (add-to-list 'inactive (propertize (company-posframe-format-backend-name-active-first-helper backend)
-                                           'face 'company-posframe-inactive-backend-name))
-        ))
-    (mapconcat (lambda (elem) (format "%s" elem)) (append active inactive) separator)
-    ))
+          (push (propertize (company-posframe-format-backend-name-active-first-helper backend)
+                            'face 'company-posframe-active-backend-name)
+                active)
+        (push (propertize (company-posframe-format-backend-name-active-first-helper backend)
+                          'face 'company-posframe-inactive-backend-name)
+              inactive)))
+    (mapconcat (lambda (elem)
+                 (format "%s" elem))
+               (append active inactive) separator)))
 
 (defun company-posframe-format-backend-name-active-first-helper (backend)
   "Helper function for `company-posframe-format-backend-name-active-first`"
@@ -226,8 +226,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
 
 (defun company-posframe-format-backend-name (backends separator)
   "Format BACKEND for displaying in the modeline."
-  (mapconcat #'company-posframe-format-backend-name-helper backends separator)
-  )
+  (mapconcat #'company-posframe-format-backend-name-helper backends separator))
 
 (defun company-posframe-format-backend-name-helper (backend)
   "Helper function for `company-posframe-format-backend-name`"
@@ -342,7 +341,7 @@ COMMAND: See `company-frontends'."
                (looking-at-p "^\\s-*$")))
     (forward-line -1)))
 
-(defun company-posframe-quickhelp-completing-read (prompt candidates &rest rest)
+(defun company-posframe-quickhelp-completing-read (_prompt candidates &rest _rest)
   "`cider', and probably other libraries, prompt the user to
 resolve ambiguous documentation requests.  Instead of failing we
 just grab the first candidate and press forward."

@@ -1,4 +1,4 @@
-;;; company-posframe-quickhelp.el --- Use a posframe as company candidate menu
+;;; company-posframe-quickhelp.el --- Use a posframe as company candidate menu    -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2018 Free Software Foundation, Inc.
 
