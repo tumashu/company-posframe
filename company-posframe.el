@@ -302,7 +302,6 @@ COMMAND: See `company-frontends'."
            (company-posframe-quickhelp-cancel-timer))
          (company-posframe-quickhelp-hide)
          (company-posframe-hide))
-        (update (company-posframe-show))
         (post-command
          (when (not run-quickhelp-command-p)
            (company-posframe-show)))))))
