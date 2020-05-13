@@ -410,16 +410,17 @@ just grab the first candidate and press forward."
                         (if company-posframe-show-metadata 1 0))
                      (with-current-buffer company-posframe-buffer
                        (frame-height posframe--frame)))))
-          (apply #'posframe-show
-                 company-posframe-quickhelp-buffer
-                 :string doc
-                 :width width
-                 :min-width width
-                 :min-height height
-                 :height height
-                 :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
-                 :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
-                 company-posframe-quickhelp-show-params))))))
+          (lower-frame
+           (apply #'posframe-show
+                  company-posframe-quickhelp-buffer
+                  :string doc
+                  :width width
+                  :min-width width
+                  :min-height height
+                  :height height
+                  :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
+                  :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
+                  company-posframe-quickhelp-show-params)))))))
 
 (defun company-posframe-quickhelp-right-poshandler (_info)
   (with-current-buffer company-posframe-buffer
@@ -430,6 +431,11 @@ just grab the first candidate and press forward."
 (defun company-posframe-quickhelp-hide ()
   (posframe-hide company-posframe-quickhelp-buffer))
 
+(defun company-posframe-quickhelp-raise-frame ()
+  (interactive)
+  (posframe-funcall company-posframe-quickhelp-buffer
+                    #'raise-frame))
+
 (defun company-posframe-quickhelp-toggle ()
   (interactive)
   (if (posframe-funcall
@@ -437,17 +443,20 @@ just grab the first candidate and press forward."
        (lambda ()
          (frame-parameter (window-frame) 'visibility)))
       (company-posframe-quickhelp-hide)
-    (company-posframe-quickhelp-show)))
+    (company-posframe-quickhelp-show)
+    (company-posframe-quickhelp-raise-frame)))
 
 (defun company-posframe-quickhelp-scroll-up (&optional arg)
   (interactive "^P")
+  (company-posframe-quickhelp-raise-frame)
   (posframe-funcall company-posframe-quickhelp-buffer
-                    'scroll-up-command arg))
+                    #'scroll-up-command arg))
 
 (defun company-posframe-quickhelp-scroll-down (&optional arg)
   (interactive "^P")
+  (company-posframe-quickhelp-raise-frame)
   (posframe-funcall company-posframe-quickhelp-buffer
-                    'scroll-down-command arg))
+                    #'scroll-down-command arg))
 
 ;;;###autoload
 (define-minor-mode company-posframe-mode
