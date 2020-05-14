@@ -267,8 +267,8 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :position (- (point) (length company-prefix))
            :min-height (+ height
                           (if company-posframe-show-indicator 1 0))
-           :min-width company-tooltip-minimum-width
-           :max-width company-tooltip-maximum-width
+           :min-width (+ company-tooltip-minimum-width (* 2 company-tooltip-margin))
+           :max-width (+ company-tooltip-maximum-width (* 2 company-tooltip-margin))
            :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
            :respect-mode-line company-posframe-show-indicator
            :font company-posframe-font
