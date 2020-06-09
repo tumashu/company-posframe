@@ -273,6 +273,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :respect-mode-line company-posframe-show-indicator
            :font company-posframe-font
            :background-color (face-attribute 'company-tooltip :background)
+           :lines-truncate t
            company-posframe-show-params)))
 
 (defun company-posframe-hide ()
