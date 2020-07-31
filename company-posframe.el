@@ -160,13 +160,15 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "List of extra parameters passed to `posframe-show' in
   `company-posframe-show'.")
 
+(defvar company-posframe-poshandler #'company-posframe-show-at-prefix
+  "Poshandler for the completion dialog.")
+
 (defvar company-posframe-quickhelp-show-params
   (list :poshandler #'company-posframe-quickhelp-right-poshandler
         :internal-border-width 1
         :timeout 60
         :internal-border-color "gray50"
-        :no-properties nil
-        :poshandler nil)
+        :no-properties nil)
   "List of parameters passed to `posframe-show'.")
 
 (defvar company-posframe-notification "")
@@ -238,6 +240,19 @@ be triggered manually using `company-posframe-quickhelp-show'."
                         'company-posframe-active-backend-name
                       'company-posframe-inactive-backend-name)))
 
+(defun company-posframe-show-at-prefix (info)
+  "Poshandler showing `company-posframe' at `company-prefix'."
+  (let ((parent-window (plist-get info :parent-window)))
+    (posframe-poshandler-point-bottom-left-corner
+     (plist-put
+      info
+      :position-info
+      (posn-at-point (- (plist-get info :position)
+                        (length (buffer-local-value 'company-prefix
+                                                    (window-buffer parent-window)))
+                        company-tooltip-margin)
+                     parent-window)))))
+
 (defun company-posframe-show ()
   "Show company-posframe candidate menu."
   (let* ((height (min company-tooltip-limit company-candidates-length))
@@ -264,15 +279,14 @@ be triggered manually using `company-posframe-quickhelp-show'."
                                                    (min width (length backend-names)))))))
     (apply #'posframe-show buffer
            :string contents
-           :position (- (point) (length company-prefix))
            :min-height (+ height (if meta 1 0))
            :min-width (+ company-tooltip-minimum-width (* 2 company-tooltip-margin))
            :max-width (+ company-tooltip-maximum-width (* 2 company-tooltip-margin))
-           :x-pixel-offset (* -1 company-tooltip-margin (default-font-width))
            :respect-mode-line company-posframe-show-indicator
            :font company-posframe-font
            :background-color (face-attribute 'company-tooltip :background)
            :lines-truncate t
+           :poshandler company-posframe-poshandler
            company-posframe-show-params)))
 
 (defun company-posframe-hide ()
