@@ -242,16 +242,14 @@ be triggered manually using `company-posframe-quickhelp-show'."
 
 (defun company-posframe-show-at-prefix (info)
   "Poshandler showing `company-posframe' at `company-prefix'."
-  (let ((parent-window (plist-get info :parent-window)))
-    (posframe-poshandler-point-bottom-left-corner
-     (plist-put
-      info
-      :position-info
-      (posn-at-point (- (plist-get info :position)
-                        (length (buffer-local-value 'company-prefix
-                                                    (window-buffer parent-window)))
-                        company-tooltip-margin)
-                     parent-window)))))
+  (let* ((parent-window (plist-get info :parent-window))
+         (point (with-current-buffer (window-buffer parent-window)
+                  (max (line-beginning-position)
+                       (- (plist-get info :position)
+                          (length company-prefix)
+                          company-tooltip-margin))))
+         (info (plist-put info :position-info (posn-at-point point parent-window))))
+    (posframe-poshandler-point-bottom-left-corner info)))
 
 (defun company-posframe-show ()
   "Show company-posframe candidate menu."
