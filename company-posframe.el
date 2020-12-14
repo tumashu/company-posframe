@@ -445,8 +445,11 @@ just grab the first candidate and press forward."
 
 (defun company-posframe-quickhelp-raise-frame ()
   (interactive)
-  (posframe-funcall company-posframe-quickhelp-buffer
-                    #'raise-frame))
+  ;; FIXME: On macOS, the new lower-frame call causes Emacs to hide.
+  ;; https://github.com/tumashu/company-posframe/issues/43
+  (unless (memq system-type '(darwin))
+    (posframe-funcall company-posframe-quickhelp-buffer
+                      #'raise-frame)))
 
 (defun company-posframe-quickhelp-toggle ()
   (interactive)
