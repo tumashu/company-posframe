@@ -257,6 +257,12 @@ be triggered manually using `company-posframe-quickhelp-show'."
          (meta (when company-posframe-show-metadata
                  (company-fetch-metadata)))
          (lines (company--create-lines company-selection height))
+         (lines
+          ;; Please see: company--create-lines return value changed #52
+          ;; https://github.com/tumashu/company-posframe/issues/52
+          (if (numberp (car lines))
+              (cdr lines)
+            lines))
          (backend-names (when company-posframe-show-indicator
                           (funcall company-posframe-backend-format-function company-backends company-posframe-backend-separator)))
          (width (max (min (length (car lines)) company-tooltip-maximum-width) company-tooltip-minimum-width))
