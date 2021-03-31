@@ -175,6 +175,9 @@ be triggered manually using `company-posframe-quickhelp-show'."
 
 (defvar company-posframe-last-status nil)
 
+(defvar company-posframe--current-margin 1
+  "Record the current margin of company candidate.")
+
 (defvar company-posframe-active-map
   (let ((keymap (make-sparse-keymap)))
     (set-keymap-parent keymap company-active-map)
@@ -247,7 +250,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
                   (max (line-beginning-position)
                        (- (plist-get info :position)
                           (length company-prefix)
-                          company-tooltip-margin))))
+                          company-posframe--current-margin))))
          (info (plist-put info :position-info (posn-at-point point parent-window))))
     (posframe-poshandler-point-bottom-left-corner info)))
 
@@ -256,13 +259,17 @@ be triggered manually using `company-posframe-quickhelp-show'."
   (let* ((height (min company-tooltip-limit company-candidates-length))
          (meta (when company-posframe-show-metadata
                  (company-fetch-metadata)))
-         (lines (company--create-lines company-selection height))
+         (company-lines (company--create-lines company-selection height))
+         (company-posframe--current-margin
+          (if (numberp (car company-lines))
+              (car company-lines)
+            company-tooltip-margin))
          (lines
           ;; Please see: company--create-lines return value changed #52
           ;; https://github.com/tumashu/company-posframe/issues/52
-          (if (numberp (car lines))
-              (cdr lines)
-            lines))
+          (if (numberp (car company-lines))
+              (cdr company-lines)
+            company-lines))
          (backend-names (when company-posframe-show-indicator
                           (funcall company-posframe-backend-format-function company-backends company-posframe-backend-separator)))
          (width (max (min (length (car lines)) company-tooltip-maximum-width) company-tooltip-minimum-width))
