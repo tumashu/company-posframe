@@ -7,7 +7,7 @@
 ;; URL: https://github.com/tumashu/company-posframe
 ;; Version: 0.6.0
 ;; Keywords: abbrev, convenience, matching
-;; Package-Requires: ((emacs "26.0")(company "0.9.0")(posframe "0.1.0"))
+;; Package-Requires: ((emacs "26.0")(company "0.9.0")(posframe "0.9.0"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -175,9 +175,6 @@ be triggered manually using `company-posframe-quickhelp-show'."
 
 (defvar company-posframe-last-status nil)
 
-(defvar company-posframe--current-margin 1
-  "Record the current margin of company candidate.")
-
 (defvar company-posframe-active-map
   (let ((keymap (make-sparse-keymap)))
     (set-keymap-parent keymap company-active-map)
@@ -249,8 +246,8 @@ be triggered manually using `company-posframe-quickhelp-show'."
          (point (with-current-buffer (window-buffer parent-window)
                   (max (line-beginning-position)
                        (- (plist-get info :position)
-                          (length company-prefix)
-                          company-posframe--current-margin))))
+                          (plist-get info :company-prefix-length)
+                          (plist-get info :company-margin)))))
          (info (plist-put info :position-info (posn-at-point point parent-window))))
     (posframe-poshandler-point-bottom-left-corner info)))
 
@@ -260,7 +257,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
          (meta (when company-posframe-show-metadata
                  (company-fetch-metadata)))
          (company-lines (company--create-lines company-selection height))
-         (company-posframe--current-margin
+         (margin
           (if (numberp (car company-lines))
               (car company-lines)
             company-tooltip-margin))
@@ -298,6 +295,9 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :background-color (face-attribute 'company-tooltip :background)
            :lines-truncate t
            :poshandler company-posframe-poshandler
+           :poshandler-extra-info
+           (list :company-margin margin
+                 :company-prefix-length (length company-prefix))
            company-posframe-show-params)))
 
 (defun company-posframe-hide ()
