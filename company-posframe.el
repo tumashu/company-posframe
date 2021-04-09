@@ -298,6 +298,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :poshandler-extra-info
            (list :company-margin margin
                  :company-prefix-length (length company-prefix))
+           :refposhandler #'posframe-refposhandler-xwininfo
            company-posframe-show-params)))
 
 (defun company-posframe-hide ()
@@ -435,23 +436,25 @@ just grab the first candidate and press forward."
                         (if company-posframe-show-metadata 1 0))
                      (with-current-buffer company-posframe-buffer
                        (frame-height posframe--frame)))))
-          (lower-frame
-           (apply #'posframe-show
-                  company-posframe-quickhelp-buffer
-                  :string doc
-                  :width width
-                  :min-width width
-                  :min-height height
-                  :height height
-                  :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
-                  :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
-                  company-posframe-quickhelp-show-params)))))))
+          (apply #'posframe-show
+                 company-posframe-quickhelp-buffer
+                 :string doc
+                 :width width
+                 :min-width width
+                 :min-height height
+                 :height height
+                 :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
+                 :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
+                 :refposhandler #'posframe-refposhandler-xwininfo
+                 company-posframe-quickhelp-show-params))))))
 
-(defun company-posframe-quickhelp-right-poshandler (_info)
+(defun company-posframe-quickhelp-right-poshandler (info)
   (with-current-buffer company-posframe-buffer
-    (let ((pos posframe--last-posframe-pixel-position))
+    (let ((ref-position (plist-get info :ref-position))
+          (pos posframe--last-posframe-pixel-position))
       (cons (+ (car pos) (+ company-posframe-quickhelp-x-offset (frame-pixel-width posframe--frame)))
-            (cdr pos)))))
+            (- (cdr pos)
+               (or (cdr ref-position) 0))))))
 
 (defun company-posframe-quickhelp-hide ()
   (posframe-hide company-posframe-quickhelp-buffer))
