@@ -421,7 +421,7 @@ just grab the first candidate and press forward."
 (defun company-posframe-quickhelp-show ()
   (company-posframe-quickhelp-cancel-timer)
   (while-no-input
-    (let* ((selected (nth company-selection company-candidates))
+    (let* ((selected (nth (or company-selection 0) company-candidates))
            (doc (let ((inhibit-message t))
                   (company-posframe-quickhelp-doc selected))))
       (when doc
