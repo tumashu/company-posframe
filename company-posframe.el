@@ -248,7 +248,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
                        (- (plist-get info :position)
                           (plist-get info :company-prefix-length)
                           (plist-get info :company-margin)))))
-         (info (plist-put info :position-info (posn-at-point point parent-window))))
+         (info (plist-put info :position (posn-at-point point parent-window))))
     (posframe-poshandler-point-bottom-left-corner info)))
 
 (defun company-posframe-show ()
