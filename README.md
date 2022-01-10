@@ -3,20 +3,21 @@ Note: this file is auto converted from company-posframe.el by [el2org](https://g
 
 # &#30446;&#24405;
 
-1.  [company-posframe README](#orgd5c8bdb)
-    1.  [What is company-posframe](#org05cffac)
-    2.  [How to use company-posframe](#org001c596)
-    3.  [Tips](#org77c9718)
-        1.  [Work better with desktop.el](#org420692d)
-    4.  [Note](#org56fb8d3)
+1.  [company-posframe README](#org07182e1)
+    1.  [What is company-posframe](#org35f7f92)
+    2.  [How to use company-posframe](#org6ecb9f3)
+    3.  [Tips](#orgb340efe)
+        1.  [How to reduce flicker when scroll up and down?](#orge2be77f)
+        2.  [Work better with desktop.el](#orgaa10af6)
+    4.  [Note](#org317fc05)
 
 
-<a id="orgd5c8bdb"></a>
+<a id="org07182e1"></a>
 
 # company-posframe README
 
 
-<a id="org05cffac"></a>
+<a id="org35f7f92"></a>
 
 ## What is company-posframe
 
@@ -31,7 +32,7 @@ It has the following feature:
 ![img](./snapshots/company-posframe.png)
 
 
-<a id="org001c596"></a>
+<a id="org6ecb9f3"></a>
 
 ## How to use company-posframe
 
@@ -39,12 +40,24 @@ It has the following feature:
     (company-posframe-mode 1)
 
 
-<a id="org77c9718"></a>
+<a id="orgb340efe"></a>
 
 ## Tips
 
 
-<a id="org420692d"></a>
+<a id="orge2be77f"></a>
+
+### How to reduce flicker when scroll up and down?
+
+In windows or MacOS system, company candidates menu may flicker
+when scroll up and down, the reason is that the size of posframe
+changing rapid, user can set the minimum width of menu to limit
+flicker, for example:
+
+    (setq company-tooltip-minimum-width 40)
+
+
+<a id="orgaa10af6"></a>
 
 ### Work better with desktop.el
 
@@ -55,7 +68,7 @@ The below code let desktop.el not record the company-posframe-mode
           desktop-minor-mode-table)
 
 
-<a id="org56fb8d3"></a>
+<a id="org317fc05"></a>
 
 ## Note
 
