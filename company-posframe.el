@@ -256,12 +256,15 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "Poshandler showing `company-posframe' at `company-prefix'."
   (let* ((parent-window (plist-get info :parent-window))
          (point (with-current-buffer (window-buffer parent-window)
-                  (max (line-beginning-position)
-                       (- (plist-get info :position)
-                          (plist-get info :company-prefix-length)
-                          (plist-get info :company-margin)))))
-         (info (plist-put info :position (posn-at-point point parent-window))))
-    (posframe-poshandler-point-bottom-left-corner info)))
+                  (- (plist-get info :position)
+                     (plist-get info :company-prefix-length))))
+         (posn (posn-at-point point parent-window))
+         ;; TODO: Strictly speaking, if company-posframe-font is not nil, that
+         ;; should be used to find the default width...
+         (expected-margin-width (* (plist-get info :company-margin) (default-font-width)))
+         (xy (posn-x-y posn)))
+    (setcar xy (- (car xy) expected-margin-width))
+    (posframe-poshandler-point-bottom-left-corner (plist-put info :position posn))))
 
 (defun company-posframe-show ()
   "Show company-posframe candidate menu."
