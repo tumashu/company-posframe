@@ -305,7 +305,6 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :min-height (+ (+ height (if meta 1 0)) (if company-posframe-show-indicator 1 0))
            :min-width (+ company-tooltip-minimum-width (* 2 company-tooltip-margin))
            :max-width (+ company-tooltip-maximum-width (* 2 company-tooltip-margin))
-           :respect-mode-line company-posframe-show-indicator
            :font company-posframe-font
            :background-color (face-attribute 'company-tooltip :background)
            :lines-truncate t
