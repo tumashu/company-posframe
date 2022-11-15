@@ -446,7 +446,8 @@ just grab the first candidate and press forward."
                (height
                 (max (+ company-tooltip-limit
                         (if company-posframe-show-indicator 1 0)
-                        (if company-posframe-show-metadata 1 0))
+                        (if company-posframe-show-metadata 1 0)
+                        1)
                      (with-current-buffer company-posframe-buffer
                        (frame-height posframe--frame)))))
           (lower-frame
