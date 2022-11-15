@@ -152,11 +152,13 @@ be triggered manually using `company-posframe-quickhelp-show'."
   "Face for the metadata footer (not the backend indicator).")
 
 (defface company-posframe-quickhelp
-  '((t :inherit default))
+  '((t :inherit company-tooltip))
   "Face for company-posframe-quickhelp doc.")
 
 (defface company-posframe-quickhelp-header
-  '((t :inherit header-line :box nil :extend t))
+  '((t :inherit company-tooltip-selection
+       :box nil
+       :extend t))
   "Face for company-posframe-quickhelp header.")
 
 (defvar company-posframe-buffer " *company-posframe-buffer*"
@@ -177,8 +179,6 @@ be triggered manually using `company-posframe-quickhelp-show'."
 
 (defvar company-posframe-quickhelp-show-params
   (list :poshandler #'company-posframe-quickhelp-right-poshandler
-        :border-width 1
-        :border-color "gray50"
         :timeout 60
         :no-properties nil)
   "List of parameters passed to `posframe-show'.")
