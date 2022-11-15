@@ -99,7 +99,7 @@ Using current frame's font if it it nil."
   :group 'company-posframe
   :type 'string)
 
-(defcustom company-posframe-show-indicator t
+(defcustom company-posframe-show-indicator nil
   "Display an indicator for backends in the mode line of the posframe."
   :group 'company-posframe
   :type 'boolean)
