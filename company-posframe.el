@@ -104,7 +104,7 @@ Using current frame's font if it it nil."
   :group 'company-posframe
   :type 'boolean)
 
-(defcustom company-posframe-show-metadata t
+(defcustom company-posframe-show-metadata nil
   "Display metadata (e.g. signature) of the selection below the visible candidates."
   :group 'company-posframe
   :type 'boolean)
