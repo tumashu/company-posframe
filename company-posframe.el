@@ -389,7 +389,7 @@ COMMAND: See `company-frontends'."
 (defun company-posframe-quickhelp-skip-footers-backwards ()
   "Skip backwards over footers and blank lines."
   (beginning-of-line)
-  (while (and (not (= (point-at-eol) (point-min)))
+  (while (and (not (= (line-end-position) (point-min)))
               (or
                ;; [back] appears at the end of the help elisp help buffer
                (looking-at-p "\\[back\\]")
