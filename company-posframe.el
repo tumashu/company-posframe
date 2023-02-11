@@ -142,6 +142,11 @@ be triggered manually using `company-posframe-quickhelp-show'."
   :group 'company-posframe
   :type 'boolean)
 
+(defcustom company-posframe-refposhandler #'company-posframe-refposhandler-default
+  "The refposhandler use by company-posframe.
+NOTE: This variable is very useful to EXWM users."
+  :type 'function)
+
 (defface company-posframe-inactive-backend-name
   '((t :inherit mode-line))
   "Face for the active backend name in the header line.")
@@ -211,6 +216,29 @@ be triggered manually using `company-posframe-quickhelp-show'."
 
     keymap)
   "Keymap that is enabled during an active completion in posframe.")
+
+(defvar exwm--connection)
+(defvar exwm-workspace--workareas)
+(defvar exwm-workspace-current-index)
+
+(defun company-posframe-refposhandler-default (&optional frame)
+  "The default posframe refposhandler used by company-posframe.
+Optional argument FRAME ."
+  (cond
+   ;; EXWM environment
+   ((bound-and-true-p exwm--connection)
+    (or (ignore-errors
+          (let ((info (elt exwm-workspace--workareas
+                           exwm-workspace-current-index)))
+            (cons (elt info 0)
+                  (elt info 1))))
+        ;; Need user install xwininfo.
+        (ignore-errors
+          (posframe-refposhandler-xwininfo frame))
+        ;; Fallback, this value will incorrect sometime, for example: user
+        ;; have panel.
+        (cons 0 0)))
+   (t nil)))
 
 (defun company-posframe-enable-overriding-keymap (orig-func keymap)
   "Advice function of `company-enable-overriding-keymap'."
@@ -331,6 +359,7 @@ be triggered manually using `company-posframe-quickhelp-show'."
            :poshandler-extra-info
            (list :company-margin margin
                  :company-prefix-length (length company-prefix))
+           :refposhandler company-posframe-refposhandler
            company-posframe-show-params)))
 
 (defun company-posframe-hide ()
@@ -479,6 +508,7 @@ just grab the first candidate and press forward."
                   :height height
                   :background-color (face-attribute 'company-posframe-quickhelp :background nil t)
                   :foreground-color (face-attribute 'company-posframe-quickhelp :foreground nil t)
+                  :refposhandler company-posframe-refposhandler
                   company-posframe-quickhelp-show-params)))))))
 
 (defun company-posframe-quickhelp-right-poshandler (_info)
